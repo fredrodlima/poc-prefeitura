@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/dbs/CitizensDb/obj/Debug
+/dbs/CitizensDb/bin/Debug
+/dbs/CitizensDb/.vs/CitizensDb/v16
+/.vs
+/dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/bin/Debug
+/dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/obj/Debug

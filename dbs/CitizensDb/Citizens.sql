@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[Citizens]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[Name] NVARCHAR(100) NULL,
+	[Password] NVARCHAR(25) NULL,
+	[CitizenTypeId] TINYINT NOT NULL,
+	[Email] NVARCHAR(50) NOT NULL,
+	[Phone] NVARCHAR(16) NOT NULL
+)
