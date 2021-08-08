@@ -8,3 +8,12 @@
 /.vs
 /dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/bin/Debug
 /dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/obj/Debug
+/dbs/GeoLocationsDb/GeoLocationsDb/.vs/GeoLocationsDb/v16/.suo
+/dbs/GeoLocationsDb/GeoLocationsDb/.vs/GeographiesDb/v16/.suo
+/dbs/CitizensDb/CitizensDb.dbmdl
+/dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/GeographiesDb.dbmdl
+/services/GeoLocationsApi/.vs/GeographiesApi
+/services/GeographiesApi/bin/Debug/net5.0
+/services/GeographiesApi/.vs/GeographiesApi
+/services/GeographiesApi/.vscode
+/services/GeographiesApi/obj
