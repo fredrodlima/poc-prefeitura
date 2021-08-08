@@ -17,3 +17,9 @@
 /services/GeographiesApi/.vs/GeographiesApi
 /services/GeographiesApi/.vscode
 /services/GeographiesApi/obj
+/dbs/GeoLocationsDb/GeoLocationsDb/obj/Debug
+/dbs/GeoLocationsDb/GeoLocationsDb/bin/Debug
+/dbs/GeoLocationsDb/.vs/GeographiesDb/v16
+/dbs/GeographiesDb/.vs/GeographiesDb/v16
+/dbs/GeographiesDb/GeographiesDb/bin/Debug
+/dbs/GeographiesDb/GeographiesDb/obj/Debug

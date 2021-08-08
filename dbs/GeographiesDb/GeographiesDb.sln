@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GeographiesDb", "GeoLocationsDb\GeographiesDb.sqlproj", "{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1DD158E7-8572-4607-8B4B-E3C4A64AC4FB}
+	EndGlobalSection
+EndGlobal
