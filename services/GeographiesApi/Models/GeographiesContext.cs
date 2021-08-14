@@ -9,6 +9,6 @@ namespace GeographiesApi.Models
         }
         public DbSet<AdministrativeDivision> AdministrativeDivisions { get; set; }
         public DbSet<CitizenLocality> CitizenLocalities { get; set; }
-        //public DbSet<CrimeOccurrence> AdministrativeDivisions { get; set; }
+        public DbSet<CrimeOccurrence> CrimeOccurrences { get; set; }
     }
 }
