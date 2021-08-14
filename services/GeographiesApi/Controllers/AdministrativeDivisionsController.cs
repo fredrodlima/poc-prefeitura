@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using GeographiesApi.Models;
+
+namespace GeographiesApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AdministrativeDivisionsController : ControllerBase
+    {
+        private readonly GeographiesContext _context;
+
+        public AdministrativeDivisionsController(GeographiesContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/AdministrativeDivisions
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AdministrativeDivision>>> GetAdministrativeDivisions()
+        {
+            return await _context.AdministrativeDivisions.ToListAsync();
+        }
+
+        // GET: api/AdministrativeDivisions/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AdministrativeDivision>> GetAdministrativeDivision(int id)
+        {
+            var administrativeDivision = await _context.AdministrativeDivisions.FindAsync(id);
+
+            if (administrativeDivision == null)
+            {
+                return NotFound();
+            }
+
+            return administrativeDivision;
+        }
+
+        // PUT: api/AdministrativeDivisions/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAdministrativeDivision(int id, AdministrativeDivision administrativeDivision)
+        {
+            if (id != administrativeDivision.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(administrativeDivision).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AdministrativeDivisionExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/AdministrativeDivisions
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<AdministrativeDivision>> PostAdministrativeDivision(AdministrativeDivision administrativeDivision)
+        {
+            _context.AdministrativeDivisions.Add(administrativeDivision);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAdministrativeDivision", new { id = administrativeDivision.Id }, administrativeDivision);
+        }
+
+        // DELETE: api/AdministrativeDivisions/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAdministrativeDivision(int id)
+        {
+            var administrativeDivision = await _context.AdministrativeDivisions.FindAsync(id);
+            if (administrativeDivision == null)
+            {
+                return NotFound();
+            }
+
+            _context.AdministrativeDivisions.Remove(administrativeDivision);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool AdministrativeDivisionExists(int id)
+        {
+            return _context.AdministrativeDivisions.Any(e => e.Id == id);
+        }
+    }
+}

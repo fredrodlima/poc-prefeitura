@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
-    <TargetDatabaseName>geo-location-db</TargetDatabaseName>
+    <TargetDatabaseName>geographies-db</TargetDatabaseName>
     <DeployScriptFileName>GeoLocationsDb.sql</DeployScriptFileName>
     <TargetConnectionString>Data Source=DESKTOP-MLSTEDC;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
     <ProfileVersionNumber>1</ProfileVersionNumber>

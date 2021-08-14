@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GeoLocationsDb", "GeoLocationsDb\GeoLocationsDb.sqlproj", "{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GeographiesDb", "GeographiesDb.sqlproj", "{20B9210A-5238-4EF7-8DA6-3EF4FE92A7F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +22,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1DD158E7-8572-4607-8B4B-E3C4A64AC4FB}
+		SolutionGuid = {087B5F2C-A685-41A2-A425-3EDF6CA180D0}
 	EndGlobalSection
 EndGlobal

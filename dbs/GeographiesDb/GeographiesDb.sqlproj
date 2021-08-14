@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>GeoLocationsDb</Name>
+    <Name>GeographiesDb</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{20b9210a-5238-4ef7-8da6-3ef4fe92a7f6}</ProjectGuid>
@@ -60,10 +60,14 @@
     <Folder Include="Publish" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Locations.sql" />
+    <Build Include="AdministrativeDivisions.sql" />
+    <Build Include="CitizenLocalities.sql" />
+    <Build Include="CrimeOccurrences.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Scripts\AddLocations.sql" />
-    <None Include="Publish\GeoLocationsDb.publish.xml" />
+    <None Include="Scripts\AddAdministrativeDivisions.sql" />
+    <None Include="Publish\GeographiesDb.publish.xml" />
+    <None Include="Scripts\AddCitizenLocalities.sql" />
+    <None Include="Scripts\AddCrimeOccurrences.sql" />
   </ItemGroup>
 </Project>
