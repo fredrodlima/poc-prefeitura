@@ -26,3 +26,7 @@
 /dbs/GeographiesDb/obj/Debug
 /dbs/GeographiesDb/bin/Debug
 /dbs/GeographiesDb/GeographiesDb.dbmdl
+/services/IdentityApi/.vscode
+/services/IdentityApi/bin/Debug/net5.0
+/services/IdentityApi/obj
+/services/IdentityApi/tempkey.jwk
