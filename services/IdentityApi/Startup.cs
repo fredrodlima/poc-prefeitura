@@ -1,16 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
 using System.Security.Claims;
 using IdentityModel;
+using IdentityServer4;
 
 namespace IdentityApi
 {
@@ -48,12 +43,31 @@ namespace IdentityApi
             public static IEnumerable<Client> Get()
             {
                 return new List<Client>{
-                    new Client{
+                    new Client
+                    {
                         ClientId = "oauthClient",
                         ClientName = "Example client application using client credentials",
                         AllowedGrantTypes = GrantTypes.ClientCredentials,
                         ClientSecrets = new List<Secret> { new Secret("SuperSecretPassword".Sha512())},
                         AllowedScopes = new List<string> {"api1.read"}
+                    },
+                    new Client
+                    {
+                        ClientId = "oidcClient",
+                        ClientName = "Example Client Application",
+                        ClientSecrets =new List<Secret> { new Secret("SuperSecretPassword".Sha512())},
+                        AllowedGrantTypes = GrantTypes.Code,
+                        RedirectUris =  new List<string> {"https://localhost:5003/signin-oidc"},
+                        AllowedScopes = new List<string>{
+                            IdentityServerConstants.StandardScopes.OpenId,
+                            IdentityServerConstants.StandardScopes.Profile,
+                            IdentityServerConstants.StandardScopes.Email,
+                            "role",
+                            "api1.read"
+                        },
+                        RequirePkce = true,
+                        AllowPlainTextPkce = false
+
                     }
                 };
             }
