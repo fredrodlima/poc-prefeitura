@@ -1,13 +1,14 @@
+using CitizensApi.Messaging.Producers;
+using CitizensApi.Models;
+using CitizensApi.Models.TaxCalculation;
+using CitizensApi.Services;
+using CitizensApi.Services.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CitizensApi.Models;
-using CitizensApi.Services.Models;
-using CitizensApi.Services;
 
 namespace CitizensApi.Controllers
 {
@@ -16,10 +17,12 @@ namespace CitizensApi.Controllers
     public class CitizensController : ControllerBase
     {
         private readonly CitizensDbContext _context;
+        private readonly MessageProducer _messageProducer;
 
-        public CitizensController(CitizensDbContext context)
+        public CitizensController(CitizensDbContext context, MessageProducer messageProducer)
         {
             _context = context;
+            _messageProducer = messageProducer;
         }
 
         // GET: api/Citizens
@@ -54,6 +57,30 @@ namespace CitizensApi.Controllers
             }
             var citizenLocalitiesService = new CitizenLocalitiesService();
             return citizenLocalitiesService.GetMyLocalities(citizen.Id).ToList();
+        }
+
+        [HttpPost("{id}/requestTaxCalculation")]
+        public async Task<IActionResult> RequestTaxCalculation(int id)
+        {
+            var citizen = await _context.Citizens.FindAsync(id);
+
+            if (citizen == null)
+            {
+                return NotFound();
+            }
+            var citizenLocalitiesService = new CitizenLocalitiesService();
+            var citizenLocalities = citizenLocalitiesService.GetMyLocalities(citizen.Id);
+
+            var @event = new RequestTaxCalculationCreated
+            {
+                Id = Guid.NewGuid(),
+                CitizenId = citizen.Id,
+                Timestamp = DateTime.UtcNow
+            };
+
+            await _messageProducer.PublishAsync(@event);
+
+            return Ok() ;
         }
 
         // PUT: api/Citizens/5
