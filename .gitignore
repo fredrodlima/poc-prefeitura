@@ -31,3 +31,12 @@
 /services/CitizensApi/bin/Debug/net5.0
 /services/CitizensApi/obj
 
+/services/CitizensApi/.vs/CitizensApi/v16/.suo
+/dbs/TaxesDb/.vs/TaxesDb/v16
+/dbs/TaxesDb/bin/Debug
+/dbs/TaxesDb/obj/Debug
+/services/CitizensApi/.vs/CitizensApi
+/services/TaxCalculationApi/.vs/TaxCalculationApi
+/services/TaxCalculationApi/.vscode
+/services/TaxCalculationApi/bin/Debug/net5.0
+/services/TaxCalculationApi/obj
