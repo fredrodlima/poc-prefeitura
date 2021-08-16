@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[TaxCalculations]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[RequestId] UNIQUEIDENTIFIER NOT NULL,
+	[OwnerId] INT NOT NULL,
+	[TaxValue] FLOAT NOT NULL
+)
