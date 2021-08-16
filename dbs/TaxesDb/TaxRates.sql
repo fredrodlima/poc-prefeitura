@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[TaxRates]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[ImmobileTypeId] INT NOT NULL,
+	[Rate] FLOAT NOT NULL
+)

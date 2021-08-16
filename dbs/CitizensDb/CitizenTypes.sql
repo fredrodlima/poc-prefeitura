@@ -1,4 +1,4 @@
 ﻿CREATE TABLE [CitizenTypes] (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
-	[Name] VARCHAR(100),
+	[Name] NVARCHAR(100),
 )

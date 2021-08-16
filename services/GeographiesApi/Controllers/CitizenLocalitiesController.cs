@@ -41,6 +41,20 @@ namespace GeographiesApi.Controllers
             return citizenLocality;
         }
 
+        // GET: api/CitizenLocalities/5
+        [HttpGet("localities/{citizenId}")]
+        public async Task<ActionResult<IEnumerable<CitizenLocality>>> GetCitizenLocalities(int citizenId)
+        {
+            var citizenLocality = await _context.CitizenLocalities.Where(cl => cl.CitizenId == citizenId).ToListAsync();
+
+            if (citizenLocality == null)
+            {
+                return NotFound();
+            }
+
+            return citizenLocality;
+        }
+
         // PUT: api/CitizenLocalities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
