@@ -1,0 +1,122 @@
+@{
+    ViewBag.Title = "Administrative Divisions";
+}
+@model IEnumerable<AdministrativeDivisionViewModel>
+<html>
+<head>
+    <title>Bom destino - Divisões Administrativas</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    @* <link rel="stylesheet" type="text/css" href="./style.css" /> *@
+    <script>
+        var myHeaders = new Headers();
+
+        var myInit = {
+            method: 'GET',
+            headers: myHeaders,
+            mode: 'cors',
+            cache: 'default'
+        };
+        function initMap() {
+            const bomDestinoCenter = { lat: -18.900, lng: -42.900 };
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: bomDestinoCenter,
+                zoom: 8,
+            });
+
+            //The marker, positioned at bomDestion
+            const marker = new google.maps.Marker({
+                position: bomDestinoCenter,
+                map: map,
+            });
+
+            //Get the data for administrative divisions to show in the map
+            fetch('https://localhost:44394/api/administrativedivisions', myInit)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (adminDivisions) {
+                    const features = adminDivisions.map(adminDivision => {
+                        const feature = {
+                            type: "Feature",
+                            geometry: adminDivision.geography,
+                            properties: {
+                                name: adminDivision.name,
+                            }
+                        };
+
+
+                        return feature;
+                    })
+
+                    for (feature of features) {
+                        map.data.addGeoJson(feature, { idPropertyName: "name" });
+                    }
+                    map.data.setStyle(function (feature) {
+                        var featureName = feature.getProperty('name');
+                        let color = "yellow";
+                        if (featureName.includes("Bairro")) {
+                            color = "green";
+                        }
+                        else if (featureName.includes("Região")) {
+                            color = "blue";
+                        }
+                        return {
+                            fillColor: color,
+                            strokeWeight: 1
+                        }
+                    });
+                });
+        }
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVkz6c1oLwck7F0kAfdyotJGgsg0pqlJ4&callback=initMap&libraries=&v=weekly"
+            async></script>
+    <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            <table class="table table-responsive" style="width:400px">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Coordinates)
+                    </th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            <ul>
+                                @foreach (var coordinate in item.Coordinates)
+                                {
+                                    <li>@coordinate.Latitude.ToString(), @coordinate.Longitude.ToString()</li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</body>
+</html>

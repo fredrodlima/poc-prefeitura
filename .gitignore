@@ -2,14 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+/.vs
 /dbs/CitizensDb/obj/Debug
 /dbs/CitizensDb/bin/Debug
 /dbs/CitizensDb/.vs/CitizensDb/v16
-/.vs
-/dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/bin/Debug
-/dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/obj/Debug
-/dbs/GeoLocationsDb/GeoLocationsDb/.vs/GeoLocationsDb/v16/.suo
-/dbs/GeoLocationsDb/GeoLocationsDb/.vs/GeographiesDb/v16/.suo
 /dbs/CitizensDb/CitizensDb.dbmdl
 /dbs/GeoLocationsDb/GeoLocationsDb/GeoLocationsDb/GeographiesDb.dbmdl
 /dbs/GeoLocationsDb/GeoLocationsDb/obj/Debug
@@ -40,3 +36,9 @@
 /services/TaxCalculationApi/.vscode
 /services/TaxCalculationApi/bin/Debug/net5.0
 /services/TaxCalculationApi/obj
+/web/CityMonitoringAppMvc/.vs/CitiyMonitoringAppMvc/DesignTimeBuild/.dtbcache.v2
+/web/CityMonitoringAppMvc/.vs/CityMonitoringAppMvc/config
+/web/CityMonitoringAppMvc/.vs/CityMonitoringAppMvc/v16
+/web/CityMonitoringAppMvc/.vscode
+/web/CityMonitoringAppMvc/bin/Debug/net5.0
+/web/CityMonitoringAppMvc/obj

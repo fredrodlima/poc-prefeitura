@@ -1,0 +1,152 @@
+﻿@{
+    ViewData["Title"] = "City monitoring app";
+}
+@model IndexPageViewModel
+
+<html>
+  <head>
+    <title>Bom destino - Monitor</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    @* <link rel="stylesheet" type="text/css" href="./style.css" /> *@
+    <script>
+        var myHeaders = new Headers();
+
+        var myInit = {
+            method: 'GET',
+            headers: myHeaders,
+            mode: 'cors',
+            cache: 'default'
+        };
+
+        
+        function initMap() {
+            const bomDestinoCenter = { lat: -18.900, lng: -42.900 };
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: bomDestinoCenter,
+                zoom: 8,
+            });
+
+            //The marker, positioned at bomDestion
+            const marker = new google.maps.Marker({
+                position: bomDestinoCenter,
+                map: map,
+            });
+
+            fetch('https://localhost:44394/api/administrativedivisions', myInit)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (adminDivisions) {
+                    const features = adminDivisions.map(adminDivision => {
+                            const feature = {
+                                type: "Feature",
+                                geometry: adminDivision.geography,
+                                properties: {
+                                    name: adminDivision.name,
+                                }
+                            };
+
+
+                            return feature;
+                    })
+                    
+                    for (feature of features) {
+                        map.data.addGeoJson(feature, { idPropertyName: "name" });
+                    }
+                    map.data.setStyle(function (feature) {
+                        var featureName = feature.getProperty('name');
+                        let color = "yellow";
+                        if (featureName.includes("Bairro")) {
+                            color = "green";
+                        }
+                        else if (featureName.includes("Região")) {
+                            color = "blue";
+                        }
+                        return {
+                            fillColor: color,
+                            strokeWeight: 1
+                        }
+                    });
+                });
+        }
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVkz6c1oLwck7F0kAfdyotJGgsg0pqlJ4&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+<form     
+    asp-controller="Home"     
+    asp-action="Search"    
+    method="post"     
+    class="form-horizontal"     
+    role="form">    
+    
+    <div class="form-group">    
+        <label for="Title">Latitude</label>    
+        <input     
+            class="form-control"     
+            placeholder="Digite a latitude"
+            asp-for="SearchInput.Latitude">       
+    </div>   
+    <div class="form-group">    
+    <label for="Title">Longitude</label>    
+    <input     
+        class="form-control"     
+        placeholder="Digite a longitude"
+        asp-for="SearchInput.Longitude">       
+    </div>   
+      
+    <button type="submit" class="btn btn-primary">Buscar</button>    
+</form>    
+  
+@{  
+    if(Model?.CitizenLocalities?.Any() == true)  
+    {  
+        <br>          
+        <br>  
+          
+        <table class="table table-bordered table-responsive table-hover">
+        <tr>    
+            <th>Nome</th>    
+            <th>Distância</th>    
+            <th>Coordenadas</th>    
+        </tr>    
+        @foreach (var t in Model.CitizenLocalities)    
+        {    
+            <tr>    
+                <td>@t.Name</td>    
+                <td>@t.Distance</td>    
+                <td>@t.Latitude, @t.Longitude</td>     
+            </tr>    
+        }    
+        </table>  
+    }  
+    else  
+    {  
+        <br>          
+        <br>  
+        <div class="alert alert-warning" role="alert">    
+            <strong>
+                Por favor digite a latitude e longitude da localidade do cidadão</strong>
+        </div>   
+    }  
+}  
+
+</body>
+</html>

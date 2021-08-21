@@ -23,6 +23,11 @@ namespace GeographiesApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("https://localhost:44305"));
+            });
 
             services.AddControllers().AddJsonOptions(options => {
                     // open api is currently using system.text.json
@@ -31,6 +36,14 @@ namespace GeographiesApi
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                     options.JsonSerializerOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
                  });
+
+            services.AddAuthentication("Bearer")
+            .AddIdentityServerAuthentication("Bearer", options =>
+            {
+                options.ApiName = "api1";
+                options.Authority = "https://localhost:5001";
+            });
+            
             
             services.AddDbContext<GeographiesContext>(opt => 
                 opt.UseSqlServer(@"Data Source=DESKTOP-MLSTEDC;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False; Database=geographies-db",
@@ -53,14 +66,17 @@ namespace GeographiesApi
             }
 
             app.UseHttpsRedirection();
+            
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
