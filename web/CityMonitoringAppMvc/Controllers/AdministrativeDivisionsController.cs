@@ -65,8 +65,8 @@ namespace CityMonitoringAppMvc.Controllers
                             {
                                 CoordinatesViewModel coordinate = new CoordinatesViewModel
                                 {
-                                    Latitude = geoCoordinate.X,
-                                    Longitude = geoCoordinate.Y
+                                    Latitude = geoCoordinate.Y,
+                                    Longitude = geoCoordinate.X
                                 };
                                 coordinates.Add(coordinate);
                             }
