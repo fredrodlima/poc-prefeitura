@@ -21,8 +21,9 @@
     @* <link rel="stylesheet" type="text/css" href="./style.css" /> *@
     <script>
         function initMap() {
+            const bomDestinoCenter = { lat: -20.000, lng: -44.000 };
             map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: -122.397, lng: 47.504 },
+                center: bomDestinoCenter,
                 zoom: 8,
             });
         }
