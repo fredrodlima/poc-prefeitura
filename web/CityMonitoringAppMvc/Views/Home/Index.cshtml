@@ -20,12 +20,65 @@
     </style>
     @* <link rel="stylesheet" type="text/css" href="./style.css" /> *@
     <script>
+        var myHeaders = new Headers();
+
+        var myInit = {
+            method: 'GET',
+            headers: myHeaders,
+            mode: 'cors',
+            cache: 'default'
+        };
+
+        
         function initMap() {
-            const bomDestinoCenter = { lat: -20.000, lng: -44.000 };
+            const bomDestinoCenter = { lat: -18.900, lng: -42.900 };
             map = new google.maps.Map(document.getElementById("map"), {
                 center: bomDestinoCenter,
                 zoom: 8,
             });
+
+            //The marker, positioned at bomDestion
+            const marker = new google.maps.Marker({
+                position: bomDestinoCenter,
+                map: map,
+            });
+
+            fetch('https://localhost:44394/api/administrativedivisions', myInit)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (adminDivisions) {
+                    const features = adminDivisions.map(adminDivision => {
+                            const feature = {
+                                type: "Feature",
+                                geometry: adminDivision.geography,
+                                properties: {
+                                    name: adminDivision.name,
+                                }
+                            };
+
+
+                            return feature;
+                    })
+                    
+                    for (feature of features) {
+                        map.data.addGeoJson(feature, { idPropertyName: "name" });
+                    }
+                    map.data.setStyle(function (feature) {
+                        var featureName = feature.getProperty('name');
+                        let color = "yellow";
+                        if (featureName.includes("Bairro")) {
+                            color = "green";
+                        }
+                        else if (featureName.includes("Região")) {
+                            color = "blue";
+                        }
+                        return {
+                            fillColor: color,
+                            strokeWeight: 1
+                        }
+                    });
+                });
         }
     </script>
   </head>
