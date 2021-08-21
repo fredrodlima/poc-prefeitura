@@ -63,11 +63,13 @@
     <Build Include="AdministrativeDivisions.sql" />
     <Build Include="CitizenLocalities.sql" />
     <Build Include="CrimeOccurrences.sql" />
+    <Build Include="AdministrativeDivisionLevels.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\AddAdministrativeDivisions.sql" />
     <None Include="Publish\GeographiesDb.publish.xml" />
     <None Include="Scripts\AddCitizenLocalities.sql" />
     <None Include="Scripts\AddCrimeOccurrences.sql" />
+    <None Include="Scripts\AddAdministrativeLevels.sql" />
   </ItemGroup>
 </Project>
