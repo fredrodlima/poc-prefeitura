@@ -23,16 +23,7 @@ namespace CityMonitoringAppMvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews(
-            options =>
-            {
-                // Prevent the following exception: 'This method does not     support GeometryCollection arguments' 
-                // See: https://github.com/npgsql/Npgsql.EntityFrameworkCore.PostgreSQL/issues/585 
-                options.ModelMetadataDetailsProviders.Add(new SuppressChildValidationMetadataProvider(typeof(Point)));
-                options.ModelMetadataDetailsProviders.Add(new SuppressChildValidationMetadataProvider(typeof(Coordinate)));
-                options.ModelMetadataDetailsProviders.Add(new SuppressChildValidationMetadataProvider(typeof(LineString)));
-                options.ModelMetadataDetailsProviders.Add(new SuppressChildValidationMetadataProvider(typeof(MultiLineString)));
-            }).AddJsonOptions(options => {
+            services.AddControllersWithViews().AddJsonOptions(options => {
                 // open api is currently using system.text.json
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
