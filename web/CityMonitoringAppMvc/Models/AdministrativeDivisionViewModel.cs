@@ -6,6 +6,7 @@ namespace CityMonitoringAppMvc.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int AdministrativeDivisionLevelId { get; set; }
 
         public List<CoordinatesViewModel> Coordinates {get; set;}
     }

@@ -1,122 +1,183 @@
-@{
-    ViewBag.Title = "Administrative Divisions";
+﻿@{
+	ViewBag.Title = "Administrative Divisions";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@model IEnumerable<AdministrativeDivisionViewModel>
-<html>
-<head>
-    <title>Bom destino - Divis�es Administrativas</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <style>
-        #map {
-            width: 100%;
-            height: 500px;
-        }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
-    @* <link rel="stylesheet" type="text/css" href="./style.css" /> *@
-    <script>
-        var myHeaders = new Headers();
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<h2> Adicionar divisão administrativa</h2>
+<div class="form-group" style="display:none">
+	<input id="txtId" class="form-control" name="Id" />
+</div>
+<div class="form-group">
+	<label for="Name">Nome:</label>
+	<input id="txtName" class="form-control" name="Name" />
+</div>
+<div class="form-group">
+	<label for="AdministrativeDivisionLevelId">Nível administrativo:</label>
+	<select id="selectAdministrativeDivisionLevel" class="form-control" name="AdministrativeDivisionLevelId">
+	</select>
+</div>
+<div class="form-group">
+	<div class="col-sm-4 col-md-4 col-xs-12">
+		<div class="form-group">
+			<label>Latitude:</label>
+			<input id="txtLatitude" class="form-control" type="text" />
+		</div>
+	</div>
+	<div class="col-sm-4 col-md-4 col-xs-12">
+		<div class="form-group">
+			<label>Longitude:</label>
+			<input id="txtLongitude" class="form-control" type="text" />
 
-        var myInit = {
-            method: 'GET',
-            headers: myHeaders,
-            mode: 'cors',
-            cache: 'default'
-        };
-        function initMap() {
-            const bomDestinoCenter = { lat: -18.900, lng: -42.900 };
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: bomDestinoCenter,
-                zoom: 8,
-            });
+		</div>
+	</div>
+	<input id="btnAddCoordinate" type="button" value="Save" onclick="AddCoordinate()" />
+	<input type="hidden" id="arrCoordinates" value="" />
+	<label>Coordinates</label>
+	<table id="coordinatesInfo">
+		<thead>
+			<tr>
+				<th>Latitude</th>
+				<th>Longitude</th>
+			</tr>
+		</thead>
+			<tbody>
+				<tr>
+					<td></td>
+				</tr>
+			</tbody>
+	</table>
 
-            //The marker, positioned at bomDestion
-            const marker = new google.maps.Marker({
-                position: bomDestinoCenter,
-                map: map,
-            });
+</div>
+<div class="text-center panel-body">
+	<button id="btnSave" class="btn btn-sm btn-primary">Salvar</button>
+</div>
 
-            //Get the data for administrative divisions to show in the map
-            fetch('https://localhost:44394/api/administrativedivisions', myInit)
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (adminDivisions) {
-                    const features = adminDivisions.map(adminDivision => {
-                        const feature = {
-                            type: "Feature",
-                            geometry: adminDivision.geography,
-                            properties: {
-                                name: adminDivision.name,
-                            }
-                        };
+<button onclick="GetAllAdministrativeDivisions()" class="btn btn-primary">Atualizar</button>
+<br />
+<h2>Divisões administrativas</h2>
+<table id="tblAdminDivisions" class="table table-sm table-striped table-bordered m-2">
+	<thead>
+		<tr>
+			<th>
+				Id Divisão Administrativa
+			</th>
+			<th>
+				Nome
+			</th>
+			<th>
+				Nível
+			</th>
+			<th>
+				Coordenadas
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
 
+<script type="text/javascript">
+	$(document).ready(() => {
+				$.ajax({
+					type: "GET",
+					url: "/AdministrativeDivisionLevels/GetAllAdministrativeDivisionLevels",
+					success: (data) => {
+						 var s = '<option value="-1">Please Select a Administrative Level</option>';
+						 for (var i = 0; i < data.length; i++) {
+						   s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+						}
+						$("#selectAdministrativeDivisionLevel").html(s);
+					}
+				});
+			});
 
-                        return feature;
-                    })
+			function GetAllAdministrativeDivisions() {
+				$.getJSON("/AdministrativeDivisions/GetAllAdministrativeDivisions", (adminDivisions) => {
+					$("#tblAdminDivisions tbody tr").remove();
+					$.map(adminDivisions, (adminDivision) => {
+						$("#tblAdminDivisions tbody").append(
+							`<tr>
+								<td> ${adminDivision.id}</td>
+								<td> ${adminDivision.name}</td>
+								<td> ${adminDivision.administrativeDivisionLevelId}</td >
+								<td> Geographies here/*${adminDivision.geography}*/</td>
+								<td>
+									<button class="btn-success" onclick="Edit(${adminDivision.id})" style="margin-right:5px;">Editar</button>
+									<button class="btn-danger" onclick="Delete(${adminDivision.id})" style="margin-right:5px;">Excluir</button
+								</td>
+							</tr>`);
+					});
+				});
+			}
 
-                    for (feature of features) {
-                        map.data.addGeoJson(feature, { idPropertyName: "name" });
-                    }
-                    map.data.setStyle(function (feature) {
-                        var featureName = feature.getProperty('name');
-                        let color = "yellow";
-                        if (featureName.includes("Bairro")) {
-                            color = "green";
-                        }
-                        else if (featureName.includes("Regi�o")) {
-                            color = "blue";
-                        }
-                        return {
-                            fillColor: color,
-                            strokeWeight: 1
-                        }
-                    });
-                });
-        }
-    </script>
-</head>
-<body>
-    <div id="map"></div>
+			function Edit(adminDivisionId) {
+				if (adminDivisionId > 0) {
+					$.getJSON(`/AdministrativeDivisions/GetAdministrativeDivision?adminDivisionId=${adminDivisionId}`, (adminDivision) => {
+						$("#txtId").val(adminDivision.id);
+						$("#txtName").val(adminDivision.name);
+						$("#selectAdministrativeDivisionLevel").val(adminDivision.administrativeDivisionLevelId);
+						//$("#txtGeography").val(adminDivision.geography);
+					});
+				}
+			}
 
-    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVkz6c1oLwck7F0kAfdyotJGgsg0pqlJ4&callback=initMap&libraries=&v=weekly"
-            async></script>
-    <div class="form-horizontal">
-        <hr />
-        <div class="form-group">
-            <table class="table table-responsive" style="width:400px">
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Coordinates)
-                    </th>
-                </tr>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            <ul>
-                                @foreach (var coordinate in item.Coordinates)
-                                {
-                                    <li>@coordinate.Latitude.ToString(), @coordinate.Longitude.ToString()</li>
-                                }
-                            </ul>
-                        </td>
-                    </tr>
-                }
-            </table>
-        </div>
-    </div>
-</body>
-</html>
+			function Delete(adminDivisionId) {
+				if (adminDivisionId > 0) {
+					$.ajax({
+						url: `/AdministrativeDivisions/DeleteAdministrativeDivision?adminDivisionId=${adminDivisionId}`,
+						type: "DELETE",
+						dataType: "json",
+						success: (data) => {
+
+						},
+						error: (ex) => {
+							console.log(`Error in operation: ${ex}`);
+						}
+					});
+				}
+			}
+
+			$("#btnSave").click(() => {
+				let adminDivision = {
+					Id: $("#txtId").val(),
+					Name: $("#txtName").val(),
+					AdministrativeDivisionLevelId: $("#selectAdministrativeDivisionLevel").val(),
+					Coordinates: coordinatesArray.map((coordinate) => { return { ...coordinate.entry}})
+				}
+
+				$.post("/AdministrativeDivisions/AddUpdateAdministrativeDivision", adminDivision)
+					.done((data) => {
+						GetAllAdministrativeDivisions();
+					});
+			});
+	
+	var coordinatesArray = new Array();
+	
+	function AddCoordinate() {
+		const latitude = document.getElementById('txtLatitude').value;
+		const longitude = document.getElementById('txtLongitude').value;
+		if (latitude && longitude) {
+			const entry = { latitude: latitude, longitude: longitude}; 
+			coordinatesArray.push({entry});
+			const tbl = document.getElementById('coordinatesInfo').getElementsByTagName("tbody")[0];
+			const row = document.createElement("tr");
+			const tdLatitude = document.createElement("td");
+			const tdLongitude = document.createElement("td");
+			let textNode = document.createTextNode(entry.latitude);
+			tdLatitude.appendChild(textNode);
+			row.appendChild(tdLatitude);
+			textNode = document.createTextNode(entry.longitude);
+			tdLongitude.appendChild(textNode);
+			row.appendChild(tdLongitude);
+			tbl.appendChild(row);
+		}
+	}
+	
+	function AddArrayContentsToHiddenField() {
+		var hdn = document.getElementById('arrCoordinates');
+		if (coordinatesArray != undefined && coordinatesArray != null && coordinatesArray.length > 0) {
+			hdn.value = coordinatesArray.join(",");
+		}
+	}
+</script>
