@@ -1,183 +1,224 @@
 ﻿@{
-	ViewBag.Title = "Administrative Divisions";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Administrative Divisions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <h2> Adicionar divisão administrativa</h2>
 <div class="form-group" style="display:none">
-	<input id="txtId" class="form-control" name="Id" />
+    <input id="txtId" class="form-control" name="Id" />
 </div>
 <div class="form-group">
-	<label for="Name">Nome:</label>
-	<input id="txtName" class="form-control" name="Name" />
+    <label for="Name">Nome:</label>
+    <input id="txtName" class="form-control" name="Name" />
 </div>
 <div class="form-group">
-	<label for="AdministrativeDivisionLevelId">Nível administrativo:</label>
-	<select id="selectAdministrativeDivisionLevel" class="form-control" name="AdministrativeDivisionLevelId">
-	</select>
+    <label for="AdministrativeDivisionLevelId">Nível administrativo:</label>
+    <select id="selectAdministrativeDivisionLevel" class="form-control" name="AdministrativeDivisionLevelId">
+    </select>
 </div>
 <div class="form-group">
-	<div class="col-sm-4 col-md-4 col-xs-12">
-		<div class="form-group">
-			<label>Latitude:</label>
-			<input id="txtLatitude" class="form-control" type="text" />
-		</div>
-	</div>
-	<div class="col-sm-4 col-md-4 col-xs-12">
-		<div class="form-group">
-			<label>Longitude:</label>
-			<input id="txtLongitude" class="form-control" type="text" />
+    <div class="row">
+        <div class="col-sm-4 col-md-4 col-xs-12">
 
-		</div>
-	</div>
-	<input id="btnAddCoordinate" type="button" value="Save" onclick="AddCoordinate()" />
-	<input type="hidden" id="arrCoordinates" value="" />
-	<label>Coordinates</label>
-	<table id="coordinatesInfo">
-		<thead>
-			<tr>
-				<th>Latitude</th>
-				<th>Longitude</th>
-			</tr>
-		</thead>
-			<tbody>
-				<tr>
-					<td></td>
-				</tr>
-			</tbody>
-	</table>
+            <label>Latitude:</label>
+            <input id="txtLatitude" class="form-control" type="text" />
+        </div>
+        <div class="col-sm-4 col-md-4 col-xs-12">
+            <label>Longitude:</label>
+            <input id="txtLongitude" class="form-control" type="text" />
+
+        </div>
+        <div class="col-sm-4 col-md-4 col-xs-12">
+            <input id="btnAddCoordinate" type="button" class="form-control btn-primary" style="margin-top: 30px;" value="Adicionar" onclick="AddCoordinate()" />
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <input type="hidden" id="arrCoordinates" value="" />
+    <label>Coordinates</label>
+    <table id="coordinatesInfo">
+        <thead>
+            <tr>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
 
 </div>
 <div class="text-center panel-body">
-	<button id="btnSave" class="btn btn-sm btn-primary">Salvar</button>
+    <button id="btnSave" class="btn btn-sm btn-primary">Salvar</button>
 </div>
 
 <button onclick="GetAllAdministrativeDivisions()" class="btn btn-primary">Atualizar</button>
 <br />
 <h2>Divisões administrativas</h2>
 <table id="tblAdminDivisions" class="table table-sm table-striped table-bordered m-2">
-	<thead>
-		<tr>
-			<th>
-				Id Divisão Administrativa
-			</th>
-			<th>
-				Nome
-			</th>
-			<th>
-				Nível
-			</th>
-			<th>
-				Coordenadas
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>
+    <thead>
+        <tr>
+            <th>
+                Id Divisão Administrativa
+            </th>
+            <th>
+                Nome
+            </th>
+            <th>
+                Nível
+            </th>
+            <th>
+                Coordenadas
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
 </table>
 
 <script type="text/javascript">
-	$(document).ready(() => {
-				$.ajax({
-					type: "GET",
-					url: "/AdministrativeDivisionLevels/GetAllAdministrativeDivisionLevels",
-					success: (data) => {
-						 var s = '<option value="-1">Please Select a Administrative Level</option>';
-						 for (var i = 0; i < data.length; i++) {
-						   s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-						}
-						$("#selectAdministrativeDivisionLevel").html(s);
-					}
-				});
-			});
+    $(document).ready(() => {
+        $.ajax({
+            type: "GET",
+            url: "/AdministrativeDivisionLevels/GetAllAdministrativeDivisionLevels",
+            async: true,
+            success: (data) => {
+                var s = '<option value="-1">Por favor escolha um nível administrativo</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                }
+                $("#selectAdministrativeDivisionLevel").html(s);
+            }
+        });
+        GetAllAdministrativeDivisions();
+    });
 
-			function GetAllAdministrativeDivisions() {
-				$.getJSON("/AdministrativeDivisions/GetAllAdministrativeDivisions", (adminDivisions) => {
-					$("#tblAdminDivisions tbody tr").remove();
-					$.map(adminDivisions, (adminDivision) => {
-						$("#tblAdminDivisions tbody").append(
-							`<tr>
-								<td> ${adminDivision.id}</td>
-								<td> ${adminDivision.name}</td>
-								<td> ${adminDivision.administrativeDivisionLevelId}</td >
-								<td> Geographies here/*${adminDivision.geography}*/</td>
-								<td>
-									<button class="btn-success" onclick="Edit(${adminDivision.id})" style="margin-right:5px;">Editar</button>
-									<button class="btn-danger" onclick="Delete(${adminDivision.id})" style="margin-right:5px;">Excluir</button
-								</td>
-							</tr>`);
-					});
-				});
-			}
+    function GetAllAdministrativeDivisions() {
+        $.getJSON("/AdministrativeDivisions/GetAllAdministrativeDivisions", (adminDivisions) => {
+            $("#tblAdminDivisions tbody tr").remove();
+            $.map(adminDivisions, (adminDivision) => {
+                const coordinatesString = adminDivision.coordinates.map(coordinate => {
+                    return ` [ ${coordinate.latitude}, ${coordinate.longitude} ] `
+                });
+                $("#tblAdminDivisions tbody").append(
+                    `<tr>
+                                    <td> ${adminDivision.id}</td>
+                                    <td> ${adminDivision.name}</td>
+                                    <td> ${adminDivision.administrativeDivisionLevelId}</td >
+                                    <td> [${coordinatesString}]</td >
+                                    <td>
+                                        <button class="btn-success" onclick="Edit(${adminDivision.id})" style="margin-right:5px;">Editar</button>
+                                        <button class="btn-danger" onclick="Delete(${adminDivision.id})" style="margin-right:5px;">Excluir</button
+                                    </td>
+                                </tr>`);
+            });
+        });
+    }
 
-			function Edit(adminDivisionId) {
-				if (adminDivisionId > 0) {
-					$.getJSON(`/AdministrativeDivisions/GetAdministrativeDivision?adminDivisionId=${adminDivisionId}`, (adminDivision) => {
-						$("#txtId").val(adminDivision.id);
-						$("#txtName").val(adminDivision.name);
-						$("#selectAdministrativeDivisionLevel").val(adminDivision.administrativeDivisionLevelId);
-						//$("#txtGeography").val(adminDivision.geography);
-					});
-				}
-			}
+    function Edit(adminDivisionId) {
+        if (adminDivisionId > 0) {
+            $.getJSON(`/AdministrativeDivisions/GetAdministrativeDivision?adminDivisionId=${adminDivisionId}`, (adminDivision) => {
+                $("#txtId").val(adminDivision.id);
+                $("#txtName").val(adminDivision.name);
+                $("#selectAdministrativeDivisionLevel").val(adminDivision.administrativeDivisionLevelId);
+                $("#coordinatesInfo tbody tr").remove();
+                adminDivision.coordinates.map(coordinate => {
+                    const entry = { latitude: coordinate.latitude, longitude: coordinate.longitude };
+                    coordinatesArray = new Array();
+                    coordinatesArray.push({ entry });
+                    const tbl = document.getElementById('coordinatesInfo').getElementsByTagName("tbody")[0];
+                    
+                    const row = document.createElement("tr");
+                    const tdLatitude = document.createElement("td");
+                    const tdLongitude = document.createElement("td");
+                    let textNode = document.createTextNode(entry.latitude);
+                    tdLatitude.appendChild(textNode);
+                    row.appendChild(tdLatitude);
+                    textNode = document.createTextNode(entry.longitude);
+                    tdLongitude.appendChild(textNode);
+                    row.appendChild(tdLongitude);
+                    tbl.appendChild(row);
+                });
+            });
+        }
+    }
 
-			function Delete(adminDivisionId) {
-				if (adminDivisionId > 0) {
-					$.ajax({
-						url: `/AdministrativeDivisions/DeleteAdministrativeDivision?adminDivisionId=${adminDivisionId}`,
-						type: "DELETE",
-						dataType: "json",
-						success: (data) => {
+    function Delete(adminDivisionId) {
+        if (adminDivisionId > 0) {
+            $.ajax({
+                url: `/AdministrativeDivisions/DeleteAdministrativeDivision?adminDivisionId=${adminDivisionId}`,
+                type: "DELETE",
+                dataType: "json",
+                async: true,
+                processData: false,
+                cache: false,
+                success: (data) => {
+                    $("#txtId").val();
+                    $("#txtName").val();
+                    $("#selectAdministrativeDivisionLevel").val();
+                    $("#coordinatesInfo tbody tr").remove();
+                    GetAllAdministrativeDivisions();
+                },
+                error: function (ex) {
+                    console.log(`Error in operation: ${ex}`);
+                    $("#txtId").val();
+                    $("#txtName").val();
+                    $("#selectAdministrativeDivisionLevel").val();
+                    $("#coordinatesInfo tbody tr").remove();
+                    GetAllAdministrativeDivisions();
+                }
+            });
+        }
+    }
 
-						},
-						error: (ex) => {
-							console.log(`Error in operation: ${ex}`);
-						}
-					});
-				}
-			}
+    $("#btnSave").click(() => {
+        let adminDivision = {
+            Id: $("#txtId").val(),
+            Name: $("#txtName").val(),
+            AdministrativeDivisionLevelId: $("#selectAdministrativeDivisionLevel").val(),
+            Coordinates: coordinatesArray.map((coordinate) => { return { ...coordinate.entry } })
+        }
 
-			$("#btnSave").click(() => {
-				let adminDivision = {
-					Id: $("#txtId").val(),
-					Name: $("#txtName").val(),
-					AdministrativeDivisionLevelId: $("#selectAdministrativeDivisionLevel").val(),
-					Coordinates: coordinatesArray.map((coordinate) => { return { ...coordinate.entry}})
-				}
+        $.post("/AdministrativeDivisions/AddUpdateAdministrativeDivision", adminDivision)
+            .done((data) => {
+                $("#txtId").val();
+                $("#txtName").val();
+                $("#selectAdministrativeDivisionLevel").val();
+                $("#coordinatesInfo tbody tr").remove();
+                GetAllAdministrativeDivisions();
+            });
+    });
 
-				$.post("/AdministrativeDivisions/AddUpdateAdministrativeDivision", adminDivision)
-					.done((data) => {
-						GetAllAdministrativeDivisions();
-					});
-			});
-	
-	var coordinatesArray = new Array();
-	
-	function AddCoordinate() {
-		const latitude = document.getElementById('txtLatitude').value;
-		const longitude = document.getElementById('txtLongitude').value;
-		if (latitude && longitude) {
-			const entry = { latitude: latitude, longitude: longitude}; 
-			coordinatesArray.push({entry});
-			const tbl = document.getElementById('coordinatesInfo').getElementsByTagName("tbody")[0];
-			const row = document.createElement("tr");
-			const tdLatitude = document.createElement("td");
-			const tdLongitude = document.createElement("td");
-			let textNode = document.createTextNode(entry.latitude);
-			tdLatitude.appendChild(textNode);
-			row.appendChild(tdLatitude);
-			textNode = document.createTextNode(entry.longitude);
-			tdLongitude.appendChild(textNode);
-			row.appendChild(tdLongitude);
-			tbl.appendChild(row);
-		}
-	}
-	
-	function AddArrayContentsToHiddenField() {
-		var hdn = document.getElementById('arrCoordinates');
-		if (coordinatesArray != undefined && coordinatesArray != null && coordinatesArray.length > 0) {
-			hdn.value = coordinatesArray.join(",");
-		}
-	}
+    var coordinatesArray = new Array();
+
+    function AddCoordinate() {
+        const latitude = document.getElementById('txtLatitude').value;
+        const longitude = document.getElementById('txtLongitude').value;
+        if (latitude && longitude) {
+            const entry = { latitude: latitude, longitude: longitude };
+            coordinatesArray.push({ entry });
+            const tbl = document.getElementById('coordinatesInfo').getElementsByTagName("tbody")[0];
+            const row = document.createElement("tr");
+            const tdLatitude = document.createElement("td");
+            const tdLongitude = document.createElement("td");
+            let textNode = document.createTextNode(entry.latitude);
+            tdLatitude.appendChild(textNode);
+            row.appendChild(tdLatitude);
+            textNode = document.createTextNode(entry.longitude);
+            tdLongitude.appendChild(textNode);
+            row.appendChild(tdLongitude);
+            tbl.appendChild(row);
+        }
+    }
+
+    function AddArrayContentsToHiddenField() {
+        var hdn = document.getElementById('arrCoordinates');
+        if (coordinatesArray != undefined && coordinatesArray != null && coordinatesArray.length > 0) {
+            hdn.value = coordinatesArray.join(",");
+        }
+    }
 </script>
