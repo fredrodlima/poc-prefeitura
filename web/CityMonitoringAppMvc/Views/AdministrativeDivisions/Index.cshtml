@@ -126,15 +126,17 @@
                 $("#txtName").val(adminDivision.name);
                 $("#selectAdministrativeDivisionLevel").val(adminDivision.administrativeDivisionLevelId);
                 $("#coordinatesInfo tbody tr").remove();
+                coordinatesArray = new Array();
                 adminDivision.coordinates.map(coordinate => {
                     const entry = { latitude: coordinate.latitude, longitude: coordinate.longitude };
-                    coordinatesArray = new Array();
                     coordinatesArray.push({ entry });
                     const tbl = document.getElementById('coordinatesInfo').getElementsByTagName("tbody")[0];
-                    
+
                     const row = document.createElement("tr");
                     const tdLatitude = document.createElement("td");
                     const tdLongitude = document.createElement("td");
+                    tdLatitude.setAttribute("contenteditable", "true");
+                    tdLongitude.setAttribute("contenteditable", "true");
                     let textNode = document.createTextNode(entry.latitude);
                     tdLatitude.appendChild(textNode);
                     row.appendChild(tdLatitude);
@@ -176,21 +178,42 @@
     }
 
     $("#btnSave").click(() => {
+        RefreshArrayContentsOfHiddenField();
         let adminDivision = {
             Id: $("#txtId").val(),
             Name: $("#txtName").val(),
             AdministrativeDivisionLevelId: $("#selectAdministrativeDivisionLevel").val(),
-            Coordinates: coordinatesArray.map((coordinate) => { return { ...coordinate.entry } })
+            Coordinates: coordinatesArray.reverse().map((coordinate) => { return { ...coordinate.entry } })
         }
-
-        $.post("/AdministrativeDivisions/AddUpdateAdministrativeDivision", adminDivision)
-            .done((data) => {
-                $("#txtId").val();
-                $("#txtName").val();
-                $("#selectAdministrativeDivisionLevel").val();
-                $("#coordinatesInfo tbody tr").remove();
-                GetAllAdministrativeDivisions();
+        if (adminDivision.Id === 0) {
+            $.post("/AdministrativeDivisions/AddAdministrativeDivision", adminDivision)
+                .done((data) => {
+                    $("#txtId").val();
+                    $("#txtName").val();
+                    $("#selectAdministrativeDivisionLevel").val();
+                    $("#coordinatesInfo tbody tr").remove();
+                    GetAllAdministrativeDivisions();
+                });
+        }
+        else {
+            $.ajax({
+                type: "PUT",
+                url: "@Url.Action("UpdateAdministrativeDivision", "AdministrativeDivisions")",
+                dataType: "json",
+                data: adminDivision,
+                cache: false,
+                success: function (d) {
+                    if (d.result) {
+                        console.log("Test");
+                    } else {
+                        console.log('do something constructive with the error here...');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // TODO: Show error
+                }
             });
+        }
     });
 
     var coordinatesArray = new Array();
@@ -205,6 +228,8 @@
             const row = document.createElement("tr");
             const tdLatitude = document.createElement("td");
             const tdLongitude = document.createElement("td");
+            tdLatitude.setAttribute("contenteditable", "true");
+            tdLongitude.setAttribute("contenteditable", "true");
             let textNode = document.createTextNode(entry.latitude);
             tdLatitude.appendChild(textNode);
             row.appendChild(tdLatitude);
@@ -215,10 +240,22 @@
         }
     }
 
-    function AddArrayContentsToHiddenField() {
-        var hdn = document.getElementById('arrCoordinates');
-        if (coordinatesArray != undefined && coordinatesArray != null && coordinatesArray.length > 0) {
-            hdn.value = coordinatesArray.join(",");
+    function RefreshArrayContentsOfHiddenField() {
+        coordinatesArray = new Array();
+        const tbl = document.getElementById('coordinatesInfo').getElementsByTagName("tbody")[0];
+        for (let i = 0; i < tbl.children.length; i++) {
+            const tr = tbl.children[i];
+            const entry = { latitude: null, longitude: null };
+            for (let j = 0; j < tr.children.length; j++) {
+                const td = tr.children[j];
+                if (j % 2 == 0) {
+                    entry.latitude = Number(td.getInnerHTML());
+                }
+                else {
+                    entry.longitude = Number(td.getInnerHTML());
+                }
+            }
+            coordinatesArray.push({ entry });
         }
     }
 </script>

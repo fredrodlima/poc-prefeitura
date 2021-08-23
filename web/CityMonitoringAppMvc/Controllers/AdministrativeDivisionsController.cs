@@ -117,24 +117,24 @@ namespace CityMonitoringAppMvc.Controllers
                     using var textReader = new StreamReader(stream);
                     using var jsonReader = new JsonTextReader(textReader);
                     var adminDivision = serializer.Deserialize<AdministrativeDivision>(jsonReader);
-                    
-                        List<CoordinatesViewModel> coordinates = new List<CoordinatesViewModel>();
-                        foreach (var geoCoordinate in adminDivision.Geography.Coordinates)
+
+                    List<CoordinatesViewModel> coordinates = new List<CoordinatesViewModel>();
+                    foreach (var geoCoordinate in adminDivision.Geography.Coordinates)
+                    {
+                        CoordinatesViewModel coordinate = new CoordinatesViewModel
                         {
-                            CoordinatesViewModel coordinate = new CoordinatesViewModel
-                            {
-                                Latitude = geoCoordinate.Y,
-                                Longitude = geoCoordinate.X
-                            };
-                            coordinates.Add(coordinate);
-                        }
-                        administrativeDivisionViewModel = new AdministrativeDivisionViewModel
-                        {
-                            Coordinates = coordinates,
-                            Id = adminDivision.Id,
-                            AdministrativeDivisionLevelId = adminDivision.AdministrativeDivisionLevelId,
-                            Name = adminDivision.Name
+                            Latitude = geoCoordinate.Y,
+                            Longitude = geoCoordinate.X
                         };
+                        coordinates.Add(coordinate);
+                    }
+                    administrativeDivisionViewModel = new AdministrativeDivisionViewModel
+                    {
+                        Coordinates = coordinates,
+                        Id = adminDivision.Id,
+                        AdministrativeDivisionLevelId = adminDivision.AdministrativeDivisionLevelId,
+                        Name = adminDivision.Name
+                    };
                 }
             }
             return administrativeDivisionViewModel;
@@ -142,13 +142,117 @@ namespace CityMonitoringAppMvc.Controllers
 
 
         [HttpPost]
-        public async Task<AdministrativeDivisionViewModel> AddUpdateAdministrativeDivision(AdministrativeDivisionViewModel adminDivisionVM)
+        public async Task<AdministrativeDivisionViewModel> AddAdministrativeDivision(AdministrativeDivisionViewModel adminDivisionVM)
         {
-                adminDivision = new AdministrativeDivision();
-                var administrativeDivisionViewModel = new AdministrativeDivisionViewModel();
+            adminDivision = new AdministrativeDivision();
+            var administrativeDivisionViewModel = new AdministrativeDivisionViewModel();
+            GeometryFactory factory = new GeometryFactory();
+            List<Coordinate> coordinates = new();
+
+            foreach (var coordinate in adminDivisionVM.Coordinates)
+            {
+                Coordinate coord = new(coordinate.Longitude, coordinate.Latitude);
+                coordinates.Add(coord);
+            }
+            var g1 = new GeometryFactory().CreateLinearRing(coordinates.ToArray());
+            var holes = Array.Empty<LinearRing>();
+            adminDivision.Geography = new GeometryFactory().CreatePolygon(g1, holes);
+            adminDivision.Name = adminDivisionVM.Name;
+            adminDivision.AdministrativeDivisionLevelId = adminDivisionVM.AdministrativeDivisionLevelId;
+
+            using (var client = new HttpClient())
+            {
+                string geoJson;
+
+                var serializer = GeoJsonSerializer.Create();
+                using (var stringWriter = new StringWriter())
+                using (var jsonWriter = new JsonTextWriter(stringWriter))
+                {
+                    serializer.Serialize(jsonWriter, adminDivision);
+
+                    geoJson = stringWriter.ToString();
+
+                    StringContent content = new StringContent(geoJson, Encoding.UTF8, "application/json");
+
+                    //Passing service base url
+                    client.BaseAddress = new Uri(BaseUrl);
+
+                    //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                    using var res = await client.PostAsync("api/AdministrativeDivisions", content);
+                    //Checking if the response is successful or not which is sent using HttpClient
+                    if (res.IsSuccessStatusCode)
+                    {
+                        //Storing the response details received from web api
+                        var adminDivisionsResponse = await res.Content.ReadAsStringAsync();
+
+                        serializer.CheckAdditionalContent = true;
+                        var stream = new MemoryStream();
+                        var writer = new StreamWriter(stream);
+                        writer.Write(adminDivisionsResponse);
+                        writer.Flush();
+                        stream.Position = 0;
+
+                        using var textReader = new StreamReader(stream);
+                        using var jsonReader = new JsonTextReader(textReader);
+                        var adminDivision = serializer.Deserialize<AdministrativeDivision>(jsonReader);
+
+
+                        List<CoordinatesViewModel> coordinatesVM = new List<CoordinatesViewModel>();
+                        foreach (var geoCoordinate in adminDivision.Geography.Coordinates)
+                        {
+                            CoordinatesViewModel coordinateVM = new CoordinatesViewModel
+                            {
+                                Latitude = geoCoordinate.Y,
+                                Longitude = geoCoordinate.X
+                            };
+                            coordinatesVM.Add(coordinateVM);
+                        }
+                        administrativeDivisionViewModel = new AdministrativeDivisionViewModel
+                        {
+                            Coordinates = coordinatesVM,
+                            Id = adminDivision.Id,
+                            AdministrativeDivisionLevelId = adminDivision.AdministrativeDivisionLevelId,
+                            Name = adminDivision.Name
+                        };
+                    }
+                }
+            }
+            return administrativeDivisionViewModel;
+        }
+
+        [HttpPut]
+        public async Task<string> UpdateAdministrativeDivision(AdministrativeDivisionViewModel adminDivisionVM)
+        {
+            var message = "";
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(BaseUrl);
+
+                using var resGet = await client.GetAsync("api/AdministrativeDivisions/" + adminDivisionVM.Id);
+                var serializer = GeoJsonSerializer.CreateDefault();
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (resGet.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var adminDivisionsResponse = await resGet.Content.ReadAsStringAsync();
+
+                    //Deserializing the response received from the web api and storing into Administrative Divisions list
+
+                    serializer.CheckAdditionalContent = true;
+                    var stream = new MemoryStream();
+                    var writer = new StreamWriter(stream);
+                    writer.Write(adminDivisionsResponse);
+                    writer.Flush();
+                    stream.Position = 0;
+
+                    using var textReader = new StreamReader(stream);
+                    using var jsonReader = new JsonTextReader(textReader);
+                    adminDivision = serializer.Deserialize<AdministrativeDivision>(jsonReader);
+                }
+
                 GeometryFactory factory = new GeometryFactory();
                 List<Coordinate> coordinates = new();
-                
+
                 foreach (var coordinate in adminDivisionVM.Coordinates)
                 {
                     Coordinate coord = new(coordinate.Longitude, coordinate.Latitude);
@@ -156,68 +260,40 @@ namespace CityMonitoringAppMvc.Controllers
                 }
                 var g1 = new GeometryFactory().CreateLinearRing(coordinates.ToArray());
                 var holes = Array.Empty<LinearRing>();
+
                 adminDivision.Geography = new GeometryFactory().CreatePolygon(g1, holes);
                 adminDivision.Name = adminDivisionVM.Name;
                 adminDivision.AdministrativeDivisionLevelId = adminDivisionVM.AdministrativeDivisionLevelId;
 
-                using (var client = new HttpClient())
+
+                string geoJson;
+
+
+                using (var stringWriter = new StringWriter())
+                using (var jsonWriter = new JsonTextWriter(stringWriter))
                 {
-                    string geoJson;
+                    serializer.Serialize(jsonWriter, adminDivision);
 
-                    var serializer = GeoJsonSerializer.Create();
-                    using (var stringWriter = new StringWriter())
-                    using (var jsonWriter = new JsonTextWriter(stringWriter))
+                    geoJson = stringWriter.ToString();
+
+                    StringContent content = new StringContent(geoJson, Encoding.UTF8, "application/json");
+
+                    //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                    using var res = await client.PutAsync($"api/AdministrativeDivisions/{adminDivision.Id}", content);
+                    //Checking if the response is successful or not which is sent using HttpClient
+                    if (res.IsSuccessStatusCode)
                     {
-                        serializer.Serialize(jsonWriter, adminDivision);
-
-                        geoJson = stringWriter.ToString();
-
-                        StringContent content = new StringContent(geoJson, Encoding.UTF8, "application/json");
-
-                        //Passing service base url
-                        client.BaseAddress = new Uri(BaseUrl);
-
-                        //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
-                        using var res = await client.PostAsync("api/AdministrativeDivisions", content);
-                        //Checking if the response is successful or not which is sent using HttpClient
-                        if (res.IsSuccessStatusCode)
-                        {
-                            //Storing the response details received from web api
-                            var adminDivisionsResponse = await res.Content.ReadAsStringAsync();
-
-                            serializer.CheckAdditionalContent = true;
-                            var stream = new MemoryStream();
-                            var writer = new StreamWriter(stream);
-                            writer.Write(adminDivisionsResponse);
-                            writer.Flush();
-                            stream.Position = 0;
-
-                            using var textReader = new StreamReader(stream);
-                            using var jsonReader = new JsonTextReader(textReader);
-                            var adminDivision = serializer.Deserialize<AdministrativeDivision>(jsonReader);
-
-
-                            List<CoordinatesViewModel> coordinatesVM = new List<CoordinatesViewModel>();
-                            foreach (var geoCoordinate in adminDivision.Geography.Coordinates)
-                            {
-                                CoordinatesViewModel coordinateVM = new CoordinatesViewModel
-                                {
-                                    Latitude = geoCoordinate.Y,
-                                    Longitude = geoCoordinate.X
-                                };
-                                coordinatesVM.Add(coordinateVM);
-                            }
-                            administrativeDivisionViewModel = new AdministrativeDivisionViewModel
-                            {
-                                Coordinates = coordinatesVM,
-                                Id = adminDivision.Id,
-                                AdministrativeDivisionLevelId = adminDivision.AdministrativeDivisionLevelId,
-                                Name = adminDivision.Name
-                            };
-                        }
+                        //Storing the response details received from web api
+                        message = await res.Content.ReadAsStringAsync();
+                    }
+                    else
+                    {
+                        message = $"Um erro ocorreu ao atualizar a divisão administrativa! Status: {res.StatusCode}";
                     }
                 }
-                return administrativeDivisionViewModel;
+            }
+
+            return message;
         }
 
         [HttpDelete]
