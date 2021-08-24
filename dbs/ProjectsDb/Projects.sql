@@ -3,6 +3,6 @@
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
 	[Name] VARCHAR(100) NOT NULL,
 	[SupervisorId] INT NOT NULL,
-	[StartDate] DATE NOT NULL,
-	[EndDate] DATE NULL
+	[StartDate] DATETIME NOT NULL,
+	[EndDate] DATETIME NULL
 )
