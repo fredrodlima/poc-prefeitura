@@ -7,6 +7,7 @@ namespace CityMonitoringAppMvc
     {  
         public DbSet<CitizenLocality> CitizenLocalities { get; set; }  
         public DbSet<AdministrativeDivision> AdminitrativeDivisions { get; set; }
+        public DbSet<AdministrativeDivisionLevel> AdministrativeDivisionLevels { get; set; }
         public DbSet<CrimeOccurrence> CrimeOcurrences { get; set; }
   
         public GeographiesDbContext(DbContextOptions options) : base(options) { }  
