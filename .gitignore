@@ -42,3 +42,6 @@
 /web/CityMonitoringAppMvc/.vscode
 /web/CityMonitoringAppMvc/bin/Debug/net5.0
 /web/CityMonitoringAppMvc/obj
+/dbs/ProjectsDb/.vs/ProjectsDb/v16/.suo
+/dbs/ProjectsDb/bin/Debug
+/dbs/ProjectsDb/obj/Debug

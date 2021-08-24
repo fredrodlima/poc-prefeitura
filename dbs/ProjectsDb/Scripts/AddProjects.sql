@@ -1,0 +1,5 @@
+﻿INSERT INTO [dbo].[Projects] ([Name], [SupervisorId], [StartDate]) VALUES ('Project 01', 1, '2021-08-01')
+INSERT INTO [dbo].[Projects] ([Name], [SupervisorId], [StartDate], [EndDate]) VALUES ('Project 02', 2, '2021-01-01','2022-08-01')
+INSERT INTO [dbo].[Projects] ([Name], [SupervisorId], [StartDate]) VALUES ('Project 03', 1, '2021-03-21')
+INSERT INTO [dbo].[Projects] ([Name], [SupervisorId], [StartDate], [EndDate]) VALUES ('Project 04', 2, '2021-06-11','2023-07-11')
+INSERT INTO [dbo].[Projects] ([Name], [SupervisorId], [StartDate]) VALUES ('Project 05', 1, '2021-07-15')

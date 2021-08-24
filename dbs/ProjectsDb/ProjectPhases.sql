@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[ProjectPhases]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[ProjectId] INT NOT NULL,
+	[Name] VARCHAR(100) NOT NULL,
+	[Status] INT NOT NULL
+)
