@@ -45,3 +45,6 @@
 /dbs/ProjectsDb/.vs/ProjectsDb/v16/.suo
 /dbs/ProjectsDb/bin/Debug
 /dbs/ProjectsDb/obj/Debug
+/services/ProjectsApi/bin/Debug/net5.0
+/services/ProjectsApi/.vs/ProjectsApi/v16
+/services/ProjectsApi/obj
