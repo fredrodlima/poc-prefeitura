@@ -1,12 +1,12 @@
 @model ProjectsAppMvc.Models.ProjectPhase
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Adicionar etapa de projeto";
 }
 
-<h1>Create</h1>
+<h1>Adicionar etapa de projeto</h1>
 
-<h4>ProjectPhase</h4>
+<h4>Etapa de Projeto</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -28,14 +28,14 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Voltar</a>
 </div>
 
 @section Scripts {
