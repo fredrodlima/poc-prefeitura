@@ -4,15 +4,17 @@ namespace CityMonitoringAppMvc.Models
 {
     public class CitizenLocalityViewModel
     {
-        public double Latitude {get; set;}
-        public double Longitude {get; set;}
+        public int Id { get; set; }
+        public int CitizenId { get; set; }
+        public int LocationTypeId { get; set; }
+        public CoordinateViewModel Coordinate {get; set;}
 
         public string Name {get; set;}
 
         public double Distance {get; set;}
     }
 
-    public class SearchInputModel
+    public class CoordinateViewModel
     {
         public double Latitude {get; set;}
         public double Longitude {get; set;}
@@ -20,7 +22,7 @@ namespace CityMonitoringAppMvc.Models
 
     public class IndexPageViewModel
     {
-        public SearchInputModel SearchInput {get; set;}
+        public CoordinateViewModel SearchInput {get; set;}
 
         public List<CitizenLocalityViewModel> CitizenLocalities {get; set;}
     }
