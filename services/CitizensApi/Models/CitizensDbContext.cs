@@ -10,5 +10,6 @@ namespace CitizensApi.Models
 
         public DbSet<Citizen> Citizens {get; set;}
         public DbSet<CitizenType> CitizenTypes {get; set;}
+        public DbSet<CitizenLocationType> CitizenLocationTypes { get; set; }
     }
 }
