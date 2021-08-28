@@ -27,6 +27,11 @@ namespace CitizensApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+             {
+                 options.AddPolicy("CitizenApiPolicy",
+                     builder => builder.WithOrigins("https://localhost:44305"));
+             });
 
             services.AddControllers().AddJsonOptions(options => {
                 // open api is currently using system.text.json
@@ -64,8 +69,11 @@ namespace CitizensApi
 
             app.UseHttpsRedirection();
 
+            app.UseCors("CitizenApiPolicy");
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
