@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,40 @@ namespace ProjectsAppMvc.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Projects.ToListAsync());
+            var projectVMs = new List<ProjectViewModel>();
+            var projects = await _context.Projects.ToListAsync();
+            projectVMs = projects.Select(p => new ProjectViewModel() {
+                Id = p.Id,
+                Name = p.Name,
+                SupervisorId = p.SupervisorId,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate
+            }).ToList();
+            foreach(var project in projectVMs){
+                var projectPhases = await _context.ProjectPhases.Where(p => p.ProjectId == project.Id).ToListAsync();
+                var progress = 0.0;
+                foreach(var phase in projectPhases){
+                    switch(phase.Status){
+                        case PhaseStatus.NotStarted:
+                        {
+                            progress += 0;
+                            break;
+                        }
+                        case PhaseStatus.InProgress:
+                        {
+                            progress += 0.5;
+                            break;
+                        }
+                        case PhaseStatus.Concluded:
+                        {
+                            progress += 1;
+                            break;
+                        }
+                    }
+                }
+                project.Progress = progress / projectPhases.Count();
+            }
+            return View(projectVMs);
         }
 
         // GET: Projects/Details/5
