@@ -1,0 +1,264 @@
+﻿@{
+    ViewBag.Title = "Citizen Locations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<h2> Adicionar localidades cidadão:</h2>
+<div class="form-group" style="display:none">
+    <input id="txtId" class="form-control" name="Id" value="0" />
+</div>
+<div class="form-group">
+    <label for="Name">Nome:</label>
+    <input id="txtName" class="form-control" name="Name" />
+</div>
+<div class="form-group">
+    <label for="CitizenId">Cidadão:</label>
+    <select id="selectCitizens" onchange="UpdateCitizenTypesAndLocationTypes()" class="form-control" name="CitizenId">
+    </select>
+</div>
+<div class="form-group">
+    <label for="CitizenTypeId">Tipo Cidadão:</label>
+    <select id="selectCitizenTypes" class="form-control" name="CitizenTypeId">
+    </select>
+    <label for="LocationTypeId">Tipo Localidade:</label>
+    <select id="selectCitizenLocationTypes" class="form-control" name="LocationTypeId">
+    </select>
+</div>
+<div class="form-group">
+    <div class="row">
+        <div class="col-sm-4 col-md-4 col-xs-12">
+
+            <label for="Latitude">Latitude:</label>
+            <input id="txtLatitude" class="form-control" name="Latitude" type="text" />
+        </div>
+        <div class="col-sm-4 col-md-4 col-xs-12">
+            <label for="Longitude">Longitude:</label>
+            <input id="txtLongitude" class="form-control" name="Longitude" type="text" />
+
+        </div>
+    </div>
+</div>
+<div class="text-center panel-body">
+    <button id="btnSave" class="btn btn-sm btn-primary">Salvar</button>
+</div>
+
+<button onclick="GetAllCitizenLocalities()" class="btn btn-primary">Atualizar</button>
+<br />
+<h2>Localidades cidadão</h2>
+<table id="tblCitizenLocalities" class="table table-sm table-striped table-bordered m-2">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Nome
+            </th>
+            <th>
+                Cidadão
+            </th>
+            <th>
+                Tipo Localidade
+            </th>
+            <th>
+                Latitude
+            </th>
+            <th>
+                Longitude
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    let citizensArray = new Array();
+    let citizenTypesArray = new Array();
+    let citizenLocationTypesArray = new Array();
+    $(document).ready(() => {
+        $.ajax({
+            type: "GET",
+            url: "/Citizens/GetAllCitizens",
+            async: true,
+            success: (data) => {
+                var s = '<option value="-1">Por favor escolha um cidadão</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                }
+                $("#selectCitizens").html(s);
+                citizensArray = data;
+                $.ajax({
+                    type: "GET",
+                    url: "/Citizens/GetAllCitizenTypes",
+                    async: true,
+                    success: (data) => {
+                        var s = '<option value="-1">Por favor escolha o tipo de cidadão</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                        }
+                        $("#selectCitizenTypes").html(s);
+                        citizenTypesArray = data;
+                        $.ajax({
+                            type: "GET",
+                            url: "/Citizens/GetAllCitizenLocationTypes",
+                            async: true,
+                            success: (data) => {
+                                citizenLocationTypesArray = data;
+                                GetAllCitizenLocalities();
+                            }
+                        });
+                    }
+                });
+                
+            }
+        });
+        
+    });
+
+    function GetAllCitizenLocalities() {
+        $.getJSON("/CitizenLocalities/GetAllCitizenLocalities", (CitizenLocalities) => {
+            $("#tblCitizenLocalities tbody tr").remove();
+            $.map(CitizenLocalities, (citizenLocality) => {
+                const citizen = citizensArray.find(c => c.id === citizenLocality.citizenId);
+                const citizenLocationType = citizenLocationTypesArray.find(c => c.id === citizenLocality.locationTypeId);
+                $("#tblCitizenLocalities tbody").append(
+                    `<tr>
+                                    <td> ${citizenLocality.id}</td>
+                                    <td> ${citizenLocality.name}</td>
+                                    <td> ${citizen ? citizen.name : ""}</td >
+                                    <td> ${citizenLocationType ? citizenLocationType.name : ""}</td >
+                                    <td> ${citizenLocality.coordinate.latitude}</td >
+                                    <td> ${citizenLocality.coordinate.longitude}</td >
+                                    <td>
+                                        <button class="btn-success" onclick="Edit(${citizenLocality.id})" style="margin-right:5px;">Editar</button>
+                                        <button class="btn-danger" onclick="Delete(${citizenLocality.id})" style="margin-right:5px;">Excluir</button
+                                    </td>
+                                </tr>`);
+            });
+        });
+    }
+
+    function Edit(citizenLocalityId) {
+        if (citizenLocalityId > 0) {
+            $.getJSON(`/CitizenLocalities/GetCitizenLocality?citizenLocalityId=${citizenLocalityId}`, (citizenLocality) => {
+                $("#txtId").val(citizenLocality.id);
+                $("#txtName").val(citizenLocality.name);
+                $("#selectCitizens").val(citizenLocality.citizenId);
+                $("#txtLatitude").val(citizenLocality.coordinate.latitude);
+                $("#txtLongitude").val(citizenLocality.coordinate.longitude);
+                UpdateCitizenTypesAndLocationTypes(citizenLocality.locationTypeId);
+            });
+        }
+    }
+
+    function UpdateCitizenTypesAndLocationTypes(locationTypeId = null) {
+        const citizenId = Number($("#selectCitizens").val());
+        const citizen = citizensArray.find(c => c.id === citizenId);
+        $("#selectCitizenTypes").val(citizenTypesArray.find(ct => ct.id === citizen.citizenTypeId).id);
+        $.ajax({
+            type: "GET",
+            url: "/Citizens/GetCitizenLocationTypesByCitizenType",
+            data: {
+                citizenTypeId: citizen.citizenTypeId,
+            },
+            async: true,
+            success: (data) => {
+                $("#selectCitizenLocationTypes option").remove();
+                var s = '<option value="-1">Por favor escolha o tipo de localidade</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                }
+                $("#selectCitizenLocationTypes").html(s);
+                $("#selectCitizenLocationTypes").val(locationTypeId);
+            }
+        });
+    }
+
+    function Delete(citizenLocalityId) {
+        if (citizenLocalityId > 0) {
+            $.ajax({
+                url: `/CitizenLocalities/DeleteCitizenLocality?citizenLocalityId=${citizenLocalityId}`,
+                type: "DELETE",
+                dataType: "json",
+                async: true,
+                processData: false,
+                cache: false,
+                success: (data) => {
+                    $("#txtId").val(0);
+                    $("#txtName").val();
+                    $("#selectCitizens").val();
+                    $("#selectCitizenTypes").val();
+                    $("#selectCitizenLocationTypes option").remove();
+                    $("#txtLatitude").val();
+                    $("#txtLongitude").val();
+                },
+                error: function (ex) {
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectCitizens").val("");
+                    $("#selectCitizenTypes").val("");
+                    $("#selectCitizenLocationTypes option").remove();
+                    $("#txtLatitude").val("");
+                    $("#txtLongitude").val("");
+                    GetAllCitizenLocalities();
+                }
+            });
+        }
+    }
+
+    $("#btnSave").click(() => {
+        const coordinate = {
+            latitude: $("#txtLatitude").val(), longitude: $("#txtLongitude").val()
+        };
+        let citizenLocality = {
+            Id: Number($("#txtId").val()),
+            Name: $("#txtName").val(),
+            CitizenId: Number($("#selectCitizens").val()),
+            LocationTypeId: Number($("#selectCitizenLocationTypes").val()),
+            Coordinate: coordinate
+        }
+        if (citizenLocality.Id === 0) {
+            $.post("/CitizenLocalities/AddCitizenLocality", citizenLocality)
+                .done((data) => {
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectCitizens").val("");
+                    $("#selectCitizenTypes").val("");
+                    $("#selectCitizenLocationTypes option").remove();
+                    $("#txtLatitude").val("");
+                    $("#txtLongitude").val("");
+                    GetAllCitizenLocalities();
+                });
+        }
+        else {
+            $.ajax({
+                type: "PUT",
+                url: "@Url.Action("UpdateCitizenLocality", "CitizenLocalities")",
+                dataType: "json",
+                data: citizenLocality,
+                cache: false,
+                success: function (d) {
+                    if (d.result) {
+                        console.log("Test");
+                    } else {
+                        console.log('do something constructive with the error here...');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectCitizens").val("");
+                    $("#selectCitizenTypes").val("");
+                    $("#selectCitizenLocationTypes option").remove();
+                    $("#txtLatitude").val("");
+                    $("#txtLongitude").val("");
+                    GetAllCitizenLocalities();
+                }
+
+            });
+        }
+        
+    });
+</script>

@@ -50,8 +50,7 @@ namespace CityMonitoringAppMvc.Controllers
             .Select(cl => new CitizenLocalityViewModel
             {
                 Distance = Math.Round(cl.Distance, 6),
-                Latitude = cl.Place.Location.X,
-                Longitude = cl.Place.Location.Y,
+                Coordinate = new CoordinateViewModel { Latitude = cl.Place.Location.X, Longitude = cl.Place.Location.Y },
                 Name = cl.Place.Name
             }).ToList();
 

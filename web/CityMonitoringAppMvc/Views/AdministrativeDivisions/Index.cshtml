@@ -159,17 +159,16 @@
                 processData: false,
                 cache: false,
                 success: (data) => {
-                    $("#txtId").val();
-                    $("#txtName").val();
-                    $("#selectAdministrativeDivisionLevel").val();
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectAdministrativeDivisionLevel").val("");
                     $("#coordinatesInfo tbody tr").remove();
                     GetAllAdministrativeDivisions();
                 },
                 error: function (ex) {
-                    console.log(`Error in operation: ${ex}`);
-                    $("#txtId").val();
-                    $("#txtName").val();
-                    $("#selectAdministrativeDivisionLevel").val();
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectAdministrativeDivisionLevel").val("");
                     $("#coordinatesInfo tbody tr").remove();
                     GetAllAdministrativeDivisions();
                 }
@@ -180,7 +179,7 @@
     $("#btnSave").click(() => {
         RefreshArrayContentsOfHiddenField();
         let adminDivision = {
-            Id: $("#txtId").val(),
+            Id: Number($("#txtId").val()),
             Name: $("#txtName").val(),
             AdministrativeDivisionLevelId: $("#selectAdministrativeDivisionLevel").val(),
             Coordinates: coordinatesArray.reverse().map((coordinate) => { return { ...coordinate.entry } })
@@ -188,9 +187,9 @@
         if (adminDivision.Id === 0) {
             $.post("/AdministrativeDivisions/AddAdministrativeDivision", adminDivision)
                 .done((data) => {
-                    $("#txtId").val();
-                    $("#txtName").val();
-                    $("#selectAdministrativeDivisionLevel").val();
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectAdministrativeDivisionLevel").val("");
                     $("#coordinatesInfo tbody tr").remove();
                     GetAllAdministrativeDivisions();
                 });
@@ -210,7 +209,11 @@
                     }
                 },
                 error: function (xhr, textStatus, errorThrown) {
-                    // TODO: Show error
+                    $("#txtId").val(0);
+                    $("#txtName").val("");
+                    $("#selectAdministrativeDivisionLevel").val("");
+                    $("#coordinatesInfo tbody tr").remove();
+                    GetAllAdministrativeDivisions();
                 }
             });
         }
