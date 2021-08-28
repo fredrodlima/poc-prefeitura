@@ -1,0 +1,8 @@
+﻿INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (1,'Casa')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (1,'Apartamento')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (1,'Prédio')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (2,'Galpão')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (2,'Loja')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (2,'Escritório')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (3,'Fazenda')
+INSERT INTO [CitizenLocationTypes] ([CitizenTypeId],[Name]) VALUES (3,'Granja')

@@ -62,10 +62,12 @@
   <ItemGroup>
     <Build Include="Citizens.sql" />
     <Build Include="CitizenTypes.sql" />
+    <Build Include="CitizenLocationTypes.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\AddCitizenTypes.sql" />
     <None Include="Scripts\AddCitizens.sql" />
     <None Include="Publish\CitizensDb.publish.xml" />
+    <None Include="Scripts\AddCitizenLocationTypes.sql" />
   </ItemGroup>
 </Project>
