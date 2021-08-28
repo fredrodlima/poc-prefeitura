@@ -48,3 +48,6 @@
 /services/ProjectsApi/bin/Debug/net5.0
 /services/ProjectsApi/.vs/ProjectsApi/v16
 /services/ProjectsApi/obj
+/web/ProjectsAppMvc/.vscode
+/web/ProjectsAppMvc/bin/Debug/net5.0
+/web/ProjectsAppMvc/obj
