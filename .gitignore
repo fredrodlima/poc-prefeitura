@@ -51,3 +51,10 @@
 /web/ProjectsAppMvc/.vscode
 /web/ProjectsAppMvc/bin/Debug/net5.0
 /web/ProjectsAppMvc/obj
+/services/ProjectsApi/.vscode
+/services/ProjectsApi/.vs/ProjectsApi/DesignTimeBuild/.dtbcache.v2
+/web/ProjectsAppMvc/.vs/ProjectsAppMvc
+/web/ProjectsAppMvc/ProjectsAppMvc.csproj.user
+/web/CityMonitoringAppMvc/.vs/CityMonitoringAppMvc/DesignTimeBuild/.dtbcache.v2
+/dbs/ProjectsDb/ProjectsDb.jfm
+/dbs/ProjectsDb/ProjectsDb.dbmdl
