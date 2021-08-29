@@ -53,7 +53,7 @@ namespace ProjectsAppMvc.Messaging
 
                         //Handle changes to global metrics
                         globalMetric.Id = 1;
-                        globalMetric.PhasesCompleted = projectPhases.Count(p => p.Status == PhaseStatus.NotStarted);
+                        globalMetric.PhasesNotStarted = projectPhases.Count(p => p.Status == PhaseStatus.NotStarted);
                         globalMetric.PhasesInProgress = projectPhases.Count(p => p.Status == PhaseStatus.InProgress);
                         globalMetric.PhasesCompleted = projectPhases.Count(p => p.Status == PhaseStatus.Completed);
                         globalMetric.Progress = CalculationHelpers.CalculateProgress(projectPhases);
