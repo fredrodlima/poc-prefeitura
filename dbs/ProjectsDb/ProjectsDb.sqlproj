@@ -62,6 +62,8 @@
   <ItemGroup>
     <Build Include="Projects.sql" />
     <Build Include="ProjectPhases.sql" />
+    <Build Include="IndividualMetrics.sql" />
+    <Build Include="GlobalMetrics.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\AddProjects.sql" />

@@ -1,0 +1,13 @@
+using System;
+namespace ProjectsAppMvc.Models.Messaging
+{
+    public class ProjectUpdated
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int SupervisorId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+}

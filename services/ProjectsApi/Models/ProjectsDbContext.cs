@@ -9,5 +9,7 @@ namespace ProjectsApi.Models{
 
         public DbSet<Project> Projects {get; set;}
         public DbSet<ProjectPhase> ProjectPhases {get; set;}
+        public DbSet<GlobalMetric> GlobalMetrics {get; set;}
+        public DbSet<IndividualMetric> IndividualMetrics {get; set;}
     }
 }

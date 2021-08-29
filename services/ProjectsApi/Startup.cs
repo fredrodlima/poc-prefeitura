@@ -1,3 +1,6 @@
+using ActiveMQ.Artemis.Client;
+using ActiveMQ.Artemis.Client.Extensions.DependencyInjection;
+using ActiveMQ.Artemis.Client.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ProjectsApi.Messaging.Producers;
 using ProjectsApi.Models;
 
 namespace ProjectsApi
@@ -21,6 +25,11 @@ namespace ProjectsApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ProjectsApiPolicy",
+                    builder => builder.WithOrigins("https://localhost:44305"));
+            });
 
             services.AddControllers();
 
@@ -31,6 +40,12 @@ namespace ProjectsApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectsApi", Version = "v1" });
             });
+
+            //Declaring the queue for project and project phase updates
+            var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
+            services.AddActiveMq("watcher-projects-cluster", endpoints)
+                .AddAnonymousProducer<MessageProducer>();
+            services.AddActiveMqHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +62,9 @@ namespace ProjectsApi
 
             app.UseRouting();
 
+            app.UseCors("ProjectsApiPolicy");
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

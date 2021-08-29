@@ -1,11 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProjectsApi.Messaging.Models;
+using ProjectsApi.Messaging.Producers;
+using ProjectsApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProjectsApi.Models;
 
 namespace ProjectsApi.Controllers
 {
@@ -14,10 +15,11 @@ namespace ProjectsApi.Controllers
     public class ProjectPhasesController : ControllerBase
     {
         private readonly ProjectsDbContext _context;
-
-        public ProjectPhasesController(ProjectsDbContext context)
+        private readonly MessageProducer _messageProducer;
+        public ProjectPhasesController(ProjectsDbContext context, MessageProducer messageProducer)
         {
             _context = context;
+            _messageProducer = messageProducer;
         }
 
         // GET: api/ProjectPhases
@@ -56,6 +58,17 @@ namespace ProjectsApi.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                var @event = new ProjectPhaseUpdated
+                {
+                    Id = projectPhase.Id,
+                    Name = projectPhase.Name,
+                    ProjectId = projectPhase.ProjectId,
+                    Status = projectPhase.Status,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                await _messageProducer.PublishAsync(@event);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -79,6 +92,17 @@ namespace ProjectsApi.Controllers
         {
             _context.ProjectPhases.Add(projectPhase);
             await _context.SaveChangesAsync();
+
+            var @event = new ProjectPhaseCreated
+            {
+                Id = projectPhase.Id,
+                Name = projectPhase.Name,
+                ProjectId = projectPhase.ProjectId,
+                Status = projectPhase.Status,
+                Timestamp = DateTime.UtcNow
+            };
+
+            await _messageProducer.PublishAsync(@event);
 
             return CreatedAtAction("GetProjectPhase", new { id = projectPhase.Id }, projectPhase);
         }

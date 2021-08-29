@@ -1,0 +1,95 @@
+﻿@model ProjectsAppMvc.Models.ProjectsReportViewModel
+<h1>Relatório de projetos</h1>
+
+<h2>
+    Aqui está o resumo do que está sendo realizado globalmente:
+</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GlobalMetrics.PhasesNotStarted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GlobalMetrics.PhasesInProgress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GlobalMetrics.PhasesCompleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GlobalMetrics.Progress)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.GlobalMetrics.PhasesNotStarted)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GlobalMetrics.PhasesInProgress)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GlobalMetrics.PhasesCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.GlobalMetrics.Progress)
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h2>
+    Aqui está o resumo do que está sendo realizado em cada projeto:
+</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IndividualMetrics.ElementAt(0).Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IndividualMetrics.ElementAt(0).ProjectId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IndividualMetrics.ElementAt(0).PhasesNotStarted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IndividualMetrics.ElementAt(0).PhasesInProgress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IndividualMetrics.ElementAt(0).PhasesCompleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IndividualMetrics.ElementAt(0).Progress)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.IndividualMetrics)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhasesNotStarted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhasesInProgress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhasesCompleted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Progress)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

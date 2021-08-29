@@ -1,11 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProjectsApi.Messaging.Models;
+using ProjectsApi.Messaging.Producers;
+using ProjectsApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProjectsApi.Models;
 
 namespace ProjectsApi.Controllers
 {
@@ -14,10 +15,12 @@ namespace ProjectsApi.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly ProjectsDbContext _context;
+        private readonly MessageProducer _messageProducer;
 
-        public ProjectsController(ProjectsDbContext context)
+        public ProjectsController(ProjectsDbContext context, MessageProducer messageProducer)
         {
             _context = context;
+            _messageProducer = messageProducer;
         }
 
         // GET: api/Projects
@@ -56,6 +59,18 @@ namespace ProjectsApi.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                var @event = new ProjectUpdated
+                {
+                    Id = project.Id,
+                    Name = project.Name,
+                    StartDate = project.StartDate,
+                    EndDate = project.EndDate,
+                    SupervisorId = project.SupervisorId,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                await _messageProducer.PublishAsync(@event);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -79,6 +94,18 @@ namespace ProjectsApi.Controllers
         {
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
+
+            var @event = new ProjectCreated
+            {
+                Id = project.Id,
+                Name = project.Name,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                SupervisorId = project.SupervisorId,
+                Timestamp = DateTime.UtcNow
+            };
+
+            await _messageProducer.PublishAsync(@event);
 
             return CreatedAtAction("GetProject", new { id = project.Id }, project);
         }

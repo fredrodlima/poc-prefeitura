@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ProjectsApi.Models {
     public class ProjectPhase {
         public int Id { get; set; }
@@ -5,12 +7,16 @@ namespace ProjectsApi.Models {
         public int ProjectId { get; set; }
         public string Name { get; set; }
 
-        public Status Status { get; set; }
+        public PhaseStatus Status { get; set; }
     }
 
-    public enum Status {
-        NotInitied,
+    public enum PhaseStatus
+    {
+        [Display(Name = "Não iniciada")]
+        NotStarted,
+        [Display(Name = "Em progresso")]
         InProgress,
-        Finished
+        [Display(Name = "Concluída")]
+        Completed
     }
 }
