@@ -1,56 +1,73 @@
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using ProjectsAppMvc.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ProjectsAppMvc.Controllers
 {
     public class ProjectsController : Controller
     {
-        private readonly ProjectsDbContext _context;
-
-        public ProjectsController(ProjectsDbContext context)
+        private string ProjectsApiBaseUrl;
+        public ProjectsController(IConfiguration configuration)
         {
-            _context = context;
+            ProjectsApiBaseUrl = configuration["Services:ProjectsApiBaseUrl"];
         }
 
         // GET: Projects
         public async Task<IActionResult> Index()
         {
             var projectVMs = new List<ProjectViewModel>();
-            var projects = await _context.Projects.ToListAsync();
-            projectVMs = projects.Select(p => new ProjectViewModel() {
-                Id = p.Id,
-                Name = p.Name,
-                SupervisorId = p.SupervisorId,
-                StartDate = p.StartDate,
-                EndDate = p.EndDate
-            }).ToList();
-            foreach(var project in projectVMs){
-                var projectPhases = await _context.ProjectPhases.Where(p => p.ProjectId == project.Id).ToListAsync();
-                var progress = 0.0;
-                foreach(var phase in projectPhases){
-                    switch(phase.Status){
-                        case PhaseStatus.NotStarted:
+            using (var client = new HttpClient())
+            {
+                //Passing service base url
+                client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                HttpResponseMessage res = await client.GetAsync("api/Projects");
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var projectsResponse = res.Content.ReadAsStringAsync().Result;
+
+                    var projects = JsonConvert.DeserializeObject<List<Project>>(projectsResponse);
+                    projectVMs = projects.Select(p => new ProjectViewModel()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        SupervisorId = p.SupervisorId,
+                        StartDate = p.StartDate,
+                        EndDate = p.EndDate
+                    }).ToList();
+                    foreach (var project in projectVMs)
+                    {
+                        //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                        HttpResponseMessage res1 = await client.GetAsync($"api/IndividualMetrics/{project.Id}");
+                        //Checking if the response is successful or not which is sent using HttpClient
+                        if (res1.IsSuccessStatusCode)
                         {
-                            progress += 0;
-                            break;
-                        }
-                        case PhaseStatus.InProgress:
-                        {
-                            progress += 0.5;
-                            break;
-                        }
-                        case PhaseStatus.Concluded:
-                        {
-                            progress += 1;
-                            break;
+                            //Storing the response details received from web api
+                            var individualMetricPhasesResponse = res1.Content.ReadAsStringAsync().Result;
+
+                            var individualMetric = JsonConvert.DeserializeObject<IndividualMetric>(individualMetricPhasesResponse);
+
+                            project.Progress = individualMetric.Progress;
                         }
                     }
                 }
-                project.Progress = progress / projectPhases.Count();
             }
             return View(projectVMs);
         }
@@ -62,14 +79,31 @@ namespace ProjectsAppMvc.Controllers
             {
                 return NotFound();
             }
-
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            var project = new Project();
+            using (var client = new HttpClient())
             {
-                return NotFound();
-            }
+                //Passing service base url
+                client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                client.DefaultRequestHeaders.Clear();
 
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                HttpResponseMessage res = await client.GetAsync($"api/Projects/{id}");
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var projectResponse = res.Content.ReadAsStringAsync().Result;
+                    project = JsonConvert.DeserializeObject<Project>(projectResponse);
+
+                    if (project == null)
+                    {
+                        return NotFound();
+                    }
+                }
+            }
             return View(project);
         }
 
@@ -88,9 +122,34 @@ namespace ProjectsAppMvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using (var client = new HttpClient())
+                {
+                    //Passing service base url
+                    client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                    client.DefaultRequestHeaders.Clear();
+
+                    //Define request data format
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var serializer = JsonSerializer.Create();
+
+                    using (var stringWriter = new StringWriter())
+                    using (var jsonWriter = new JsonTextWriter(stringWriter))
+                    {
+                        serializer.Serialize(jsonWriter, project);
+
+                        string projectJson = stringWriter.ToString();
+
+                        StringContent content = new StringContent(projectJson, Encoding.UTF8, "application/json");
+                        HttpResponseMessage res = await client.PostAsync($"api/Projects/", content);
+                        //Checking if the response is successful or not which is sent using HttpClient
+                        if (res.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                }
+
             }
             return View(project);
         }
@@ -102,11 +161,30 @@ namespace ProjectsAppMvc.Controllers
             {
                 return NotFound();
             }
-
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            var project = new Project();
+            using (var client = new HttpClient())
             {
-                return NotFound();
+                //Passing service base url
+                client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                HttpResponseMessage res = await client.GetAsync($"api/Projects/{id}");
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var projectResponse = res.Content.ReadAsStringAsync().Result;
+                    project = JsonConvert.DeserializeObject<Project>(projectResponse);
+
+                    if (project == null)
+                    {
+                        return NotFound();
+                    }
+                }
             }
             return View(project);
         }
@@ -127,12 +205,37 @@ namespace ProjectsAppMvc.Controllers
             {
                 try
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
+                    using (var client = new HttpClient())
+                    {
+                        //Passing service base url
+                        client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                        client.DefaultRequestHeaders.Clear();
+
+                        //Define request data format
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var serializer = JsonSerializer.Create();
+                        string projectJson;
+                        using (var stringWriter = new StringWriter())
+                        using (var jsonWriter = new JsonTextWriter(stringWriter))
+                        {
+                            serializer.Serialize(jsonWriter, project);
+
+                            projectJson = stringWriter.ToString();
+
+                            StringContent content = new StringContent(projectJson, Encoding.UTF8, "application/json");
+
+                            //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                            using var res = await client.PutAsync($"api/Projects/{project.Id}", content);
+                            //Checking if the response is successful or not which is sent using HttpClient
+                            if (res.IsSuccessStatusCode)
+                            { }
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!await ProjectExistsAsync(project.Id))
                     {
                         return NotFound();
                     }
@@ -154,8 +257,26 @@ namespace ProjectsAppMvc.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var project = new Project();
+            using (var client = new HttpClient())
+            {
+                //Passing service base url
+                client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                HttpResponseMessage res = await client.GetAsync($"api/Projects/{id}");
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var projectResponse = res.Content.ReadAsStringAsync().Result;
+                    project = JsonConvert.DeserializeObject<Project>(projectResponse);
+                }
+            }
             if (project == null)
             {
                 return NotFound();
@@ -169,15 +290,50 @@ namespace ProjectsAppMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
+            using (var client = new HttpClient())
+            {
+                //Passing service base url
+                client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                using var res = await client.DeleteAsync("api/Projects/" + id);
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    await res.Content.ReadAsStringAsync();
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExistsAsync(int id)
         {
-            return _context.Projects.Any(e => e.Id == id);
+            using (var client = new HttpClient())
+            {
+                //Passing service base url
+                client.BaseAddress = new Uri(ProjectsApiBaseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                HttpResponseMessage res = await client.GetAsync($"api/Projects/{id}");
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var projectResponse = res.Content.ReadAsStringAsync().Result;
+                    var project = JsonConvert.DeserializeObject<Project>(projectResponse);
+                    return project != null;
+                }
+            }
+            return false;
         }
     }
 }
