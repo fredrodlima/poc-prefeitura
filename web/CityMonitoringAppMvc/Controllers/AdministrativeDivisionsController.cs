@@ -146,7 +146,6 @@ namespace CityMonitoringAppMvc.Controllers
         {
             adminDivision = new AdministrativeDivision();
             var administrativeDivisionViewModel = new AdministrativeDivisionViewModel();
-            GeometryFactory factory = new GeometryFactory();
             List<Coordinate> coordinates = new();
 
             foreach (var coordinate in adminDivisionVM.Coordinates)
