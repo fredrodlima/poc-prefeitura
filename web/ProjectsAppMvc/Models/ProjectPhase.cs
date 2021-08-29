@@ -20,6 +20,6 @@ namespace ProjectsAppMvc.Models
         [Display(Name = "Em progresso")]
         InProgress,
         [Display(Name = "Concluída")]
-        Concluded
+        Completed
     }
 }
