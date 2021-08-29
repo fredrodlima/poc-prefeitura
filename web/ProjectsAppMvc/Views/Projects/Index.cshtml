@@ -4,14 +4,10 @@
     ViewData["Title"] = "Projetos";
 }
 
-@{
-    double meanGlobalProgress = Model.Sum(model => model.Progress) / Model.Count();
-}
-
 <h1>Projetos</h1>
 
 <h2>
-    O progresso global dos projetos é: @string.Format("{0:p2}", @meanGlobalProgress)
+    O progresso global dos projetos é: <span id="globalProgress"></span>
 </h2>
 <p>
     <a asp-action="Create">Adicionar novo projeto</a>
@@ -64,3 +60,17 @@
 }
     </tbody>
 </table>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    $(document).ready(() => {
+        $.ajax({
+            type: "GET",
+            url: "/GlobalMetrics/GetGlobalMetric",
+            async: true,
+            success: (data) => {
+                const globalProgressString = Intl.NumberFormat('pt-BR', { style: 'percent', maximumSignificantDigits: 4, minimumFractionDigits: 2 }).format(data.progress);
+                $("#globalProgress").html(globalProgressString);
+            }
+        });
+    });
+</script>
