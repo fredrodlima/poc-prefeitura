@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ActiveMQ.Artemis.Client;
+using ActiveMQ.Artemis.Client.Extensions.DependencyInjection;
+using ActiveMQ.Artemis.Client.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using ProjectsAppMvc.Messaging.Consumers;
+using ProjectsAppMvc.Models.Messaging;
 
 namespace ProjectsAppMvc
 {
@@ -28,6 +28,17 @@ namespace ProjectsAppMvc
 
             services.AddDbContext<ProjectsDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ProjectsDbContext")));
+
+            var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
+            services.AddActiveMq("watcher-projects-cluster", endpoints)
+                    .AddTypedConsumer<ProjectCreated, ProjectCreatedConsumer>(RoutingType.Multicast)
+                    .AddTypedConsumer<ProjectUpdated, ProjectUpdatedConsumer>(RoutingType.Multicast)
+                    .AddTypedConsumer<ProjectPhaseCreated, ProjectPhaseCreatedConsumer>(RoutingType.Multicast)
+                    .AddTypedConsumer<ProjectPhaseUpdated, ProjectPhaseUpdatedConsumer>(RoutingType.Multicast);
+
+            services.AddActiveMqHostedService();
+
+            services.AddSingleton(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
