@@ -36,16 +36,16 @@ namespace TaxCalculationApi
                  });
             
             services.AddDbContext<TaxesDbContext>(opt => 
-                opt.UseSqlServer(@"Data Source=DESKTOP-MLSTEDC;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False; Database=taxes-db"));
+                opt.UseSqlServer(Configuration.GetConnectionString("TaxesDbContext")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaxCalculationApi", Version = "v1" });
             });
 
-            var endpoints = new [] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin")};
-            services.AddActiveMq("taxcalculation", endpoints)
-            .AddTypedConsumer<RequestTaxCalculationCreated, TaxCalculationRequestConsumer>(RoutingType.Multicast);
-            services.AddActiveMqHostedService();
+            //var endpoints = new [] { Endpoint.Create(host: "artemis", port: 5672, "admin", "admin")};
+            //services.AddActiveMq("taxcalculation-queue", endpoints)
+            //.AddTypedConsumer<RequestTaxCalculationCreated, TaxCalculationRequestConsumer>(RoutingType.Multicast);
+            //services.AddActiveMqHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

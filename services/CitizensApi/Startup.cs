@@ -27,11 +27,11 @@ namespace CitizensApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-             {
-                 options.AddPolicy("CitizenApiPolicy",
-                     builder => builder.WithOrigins("https://localhost:44305"));
-             });
+            //services.AddCors(options =>
+            // {
+            //     options.AddPolicy("CitizenApiPolicy",
+            //         builder => builder.WithOrigins("https://localhost:5003"));
+            // });
 
             services.AddControllers().AddJsonOptions(options => {
                 // open api is currently using system.text.json
@@ -41,8 +41,9 @@ namespace CitizensApi
                 //options.JsonSerializerOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory());
             });
 
+
             services.AddDbContext<CitizensDbContext>(opt => 
-                opt.UseSqlServer(@"Data Source=DESKTOP-MLSTEDC;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False; Database=citizens-db"));
+                 opt.UseSqlServer(Configuration.GetConnectionString("CitizensDbContext")));
 
             services.AddSwaggerGen(c =>
             {
@@ -50,10 +51,10 @@ namespace CitizensApi
             });
             
             //Declaring the queue for requesting the tax calculation
-            var endpoints = new [] { Endpoint.Create(host : "localhost", port: 5672, "admin", "admin")};
-            services.AddActiveMq("taxcalculation", endpoints)
-                .AddAnonymousProducer<MessageProducer>();
-            services.AddActiveMqHostedService();
+            //var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "admin")};
+            //services.AddActiveMq("taxcalculation-queue", endpoints)
+            //    .AddAnonymousProducer<MessageProducer>();
+            //services.AddActiveMqHostedService();
 
         }
 
@@ -69,7 +70,7 @@ namespace CitizensApi
 
             app.UseHttpsRedirection();
 
-            app.UseCors("CitizenApiPolicy");
+            //app.UseCors("CitizenApiPolicy");
 
             app.UseRouting();
 

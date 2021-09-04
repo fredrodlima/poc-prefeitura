@@ -58,3 +58,11 @@
 /web/CityMonitoringAppMvc/.vs/CityMonitoringAppMvc/DesignTimeBuild/.dtbcache.v2
 /dbs/ProjectsDb/ProjectsDb.jfm
 /dbs/ProjectsDb/ProjectsDb.dbmdl
+/bin/Debug
+/obj
+/services/CitizensApi/.vscode
+/services/CitizensApi/bin/Debug
+/services/IdentityApi/obj/Debug/net5.0
+/services/IdentityApi/obj/Release/net5.0
+/web/CitizenPortalWebMVC/obj/Debug/net5.0
+/web/CitizenPortalWebMVC/obj/Release/net5.0

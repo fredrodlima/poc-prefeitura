@@ -25,16 +25,16 @@ namespace ProjectsApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("ProjectsApiPolicy",
-                    builder => builder.WithOrigins("https://localhost:44305"));
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("ProjectsApiPolicy",
+            //        builder => builder.WithOrigins("https://localhost:44305"));
+            //});
 
             services.AddControllers();
 
             services.AddDbContext<ProjectsDbContext>(opt => 
-                    opt.UseSqlServer(@"Data Source=DESKTOP-MLSTEDC;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False; Database=projects-db"));
+                    opt.UseSqlServer(Configuration.GetConnectionString("ProjectsDbContext")));
 
             services.AddSwaggerGen(c =>
             {
@@ -42,10 +42,10 @@ namespace ProjectsApi
             });
 
             //Declaring the queue for project and project phase updates
-            var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
-            services.AddActiveMq("watcher-projects-cluster", endpoints)
-                .AddAnonymousProducer<MessageProducer>();
-            services.AddActiveMqHostedService();
+            //var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
+            //services.AddActiveMq("watcher-projects-cluster", endpoints)
+            //    .AddAnonymousProducer<MessageProducer>();
+            //services.AddActiveMqHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +62,7 @@ namespace ProjectsApi
 
             app.UseRouting();
 
-            app.UseCors("ProjectsApiPolicy");
+            //app.UseCors("ProjectsApiPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();

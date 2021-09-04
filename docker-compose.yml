@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  citizensapi:
+    image: ${DOCKER_REGISTRY-}citizensapi
+    build:
+      context: .
+      dockerfile: services/CitizensApi/Dockerfile
+    depends_on:
+      - sqldata
+  taxcalculationapi:
+    image: ${DOCKER_REGISTRY-}taxcalculationapi
+    build:
+      context: .
+      dockerfile: services/TaxCalculationApi/Dockerfile
+    depends_on:
+      - sqldata
+  geographiesapi:
+    image: ${DOCKER_REGISTRY-}geographiesapi
+    build:
+      context: .
+      dockerfile: services/GeographiesApi/Dockerfile
+    depends_on:
+      - sqldata
+  projectsapi:
+    image: ${DOCKER_REGISTRY-}projectsapi
+    build:
+      context: .
+      dockerfile: services/ProjectsApi/Dockerfile
+    depends_on:
+      - sqldata
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
+    ports:
+      - 1433:1433
+    environment:
+      SA_PASSWORD: "Passw@rd123!"
+      ACCEPT_EULA: "Y"
