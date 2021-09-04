@@ -68,5 +68,6 @@
     <None Include="Scripts\AddImmobiles.sql" />
     <None Include="Scripts\AddTaxRates.sql" />
     <None Include="Publish\TaxesDb.publish.xml" />
+    <None Include="Publish\TaxesDb.docker.publish.xml" />
   </ItemGroup>
 </Project>

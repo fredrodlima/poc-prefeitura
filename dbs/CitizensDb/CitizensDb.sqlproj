@@ -69,5 +69,6 @@
     <None Include="Scripts\AddCitizens.sql" />
     <None Include="Publish\CitizensDb.publish.xml" />
     <None Include="Scripts\AddCitizenLocationTypes.sql" />
+    <None Include="Publish\CitizensDb.publish.docker.publish.xml" />
   </ItemGroup>
 </Project>

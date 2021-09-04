@@ -68,8 +68,6 @@ namespace CitizensApi.Controllers
             {
                 return NotFound();
             }
-            var citizenLocalitiesService = new CitizenLocalitiesService();
-            var citizenLocalities = citizenLocalitiesService.GetMyLocalities(citizen.Id);
 
             var @event = new RequestTaxCalculationCreated
             {

@@ -71,5 +71,6 @@
     <None Include="Scripts\AddCitizenLocalities.sql" />
     <None Include="Scripts\AddCrimeOccurrences.sql" />
     <None Include="Scripts\AddAdministrativeLevels.sql" />
+    <None Include="Publish\GeographiesDb.docker.publish.xml" />
   </ItemGroup>
 </Project>
