@@ -69,5 +69,7 @@
     <None Include="Scripts\AddProjects.sql" />
     <None Include="Scripts\AddProjectPhases.sql" />
     <None Include="Publish\ProjectsDb.publish.xml" />
+    <None Include="Publish\ProjectsDb.docker.publish.xml" />
+    <None Include="Scripts\AddGlobalMetrics.sql" />
   </ItemGroup>
 </Project>
