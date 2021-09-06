@@ -3,7 +3,6 @@ using ActiveMQ.Artemis.Client.Extensions.DependencyInjection;
 using ActiveMQ.Artemis.Client.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,11 +25,8 @@ namespace ProjectsAppMvc
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<ProjectsDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("ProjectsDbContext")));
-
-            var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
-            services.AddActiveMq("watcher-projects-cluster", endpoints)
+            var endpoints = new[] { Endpoint.Create(host: "artemis", port: 5672, "admin", "Passw@rd123!") };
+            services.AddActiveMq("watcher-projects", endpoints)
                     .AddTypedConsumer<ProjectCreated, ProjectCreatedConsumer>(RoutingType.Multicast)
                     .AddTypedConsumer<ProjectUpdated, ProjectUpdatedConsumer>(RoutingType.Multicast)
                     .AddTypedConsumer<ProjectPhaseCreated, ProjectPhaseCreatedConsumer>(RoutingType.Multicast)
