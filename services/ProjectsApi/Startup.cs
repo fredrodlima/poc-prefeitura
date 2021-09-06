@@ -42,10 +42,10 @@ namespace ProjectsApi
             });
 
             //Declaring the queue for project and project phase updates
-            //var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
-            //services.AddActiveMq("watcher-projects-cluster", endpoints)
-            //    .AddAnonymousProducer<MessageProducer>();
-            //services.AddActiveMqHostedService();
+            var endpoints = new[] { Endpoint.Create(host: "artemis", port: 5672, "admin", "admin") };
+            services.AddActiveMq("watcher-projects", endpoints)
+                .AddAnonymousProducer<MessageProducer>();
+            services.AddActiveMqHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
