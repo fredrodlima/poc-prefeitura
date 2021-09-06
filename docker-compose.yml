@@ -1,6 +1,15 @@
 version: '3.4'
 
 services:
+  projectsappmvc:
+    image: ${DOCKER_REGISTRY-}projectsappmvc
+    build:
+      context: .
+      dockerfile: web/ProjectsAppMvc/Dockerfile
+    networks:
+      - poc-prefeitura-network
+    depends_on:
+      - projectsapi
   citizensapi:
     image: ${DOCKER_REGISTRY-}citizensapi
     build:
