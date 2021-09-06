@@ -52,7 +52,7 @@ namespace CitizensApi
             });
 
             //Declaring the queue for requesting the tax calculation
-            var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "admin")};
+            var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "Passw@rd123!") };
             services.AddActiveMq("taxcalculation-queue", endpoints)
                 .AddAnonymousProducer<MessageProducer>();
             services.AddActiveMqHostedService();
