@@ -23,11 +23,11 @@ namespace GeographiesApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowSpecificOrigin",
-            //        builder => builder.WithOrigins("https://localhost:44305"));
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://taxcalculation-api", "http://citizens-api"));
+            });
 
             services.AddControllers().AddJsonOptions(options => {
                     // open api is currently using system.text.json
@@ -43,8 +43,8 @@ namespace GeographiesApi
             //    options.ApiName = "api1";
             //    options.Authority = "https://localhost:5001";
             //});
-            
-            
+
+
             services.AddDbContext<GeographiesContext>(opt => 
                 opt.UseSqlServer(Configuration.GetConnectionString("GeographiesDbContext"),
                  x => x.UseNetTopologySuite()));            
@@ -65,9 +65,9 @@ namespace GeographiesApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeographiesApi v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             
-            //app.UseCors("AllowSpecificOrigin");
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseRouting();
 
