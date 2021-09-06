@@ -3,7 +3,6 @@ using ActiveMQ.Artemis.Client.Extensions.DependencyInjection;
 using ActiveMQ.Artemis.Client.Extensions.Hosting;
 using CitizensApi.Messaging.Producers;
 using CitizensApi.Models;
-using CitizensApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,11 +27,11 @@ namespace CitizensApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(options =>
-            // {
-            //     options.AddPolicy("CitizenApiPolicy",
-            //         builder => builder.WithOrigins("https://localhost:5003"));
-            // });
+            services.AddCors(options =>
+             {
+                 options.AddPolicy("CitizenApiPolicy",
+                     builder => builder.WithOrigins("http://city-monitoring-app-mvc"));
+             });
 
             services.AddControllers().AddJsonOptions(options => {
                 // open api is currently using system.text.json
@@ -69,9 +68,9 @@ namespace CitizensApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CitizensApi v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            //app.UseCors("CitizenApiPolicy");
+            app.UseCors("CitizenApiPolicy");
 
             app.UseRouting();
 
