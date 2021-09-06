@@ -44,7 +44,7 @@ namespace TaxCalculationApi
             });
 
             //Declaring the queue for receiving requests of tax calculation
-            var endpoints = new [] { Endpoint.Create(host: "artemis", port: 5672, "admin", "admin")};
+            var endpoints = new [] { Endpoint.Create(host: "artemis", port: 5672, "admin", "Passw@rd123!") };
             services.AddActiveMq("taxcalculation-queue", endpoints)
             .AddTypedConsumer<RequestTaxCalculationCreated, TaxCalculationRequestConsumer>(RoutingType.Multicast);
             services.AddActiveMqHostedService();
