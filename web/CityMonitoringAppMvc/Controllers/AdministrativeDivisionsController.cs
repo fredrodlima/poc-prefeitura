@@ -18,11 +18,51 @@ namespace CityMonitoringAppMvc.Controllers
     public class AdministrativeDivisionsController : Controller
     {
         //Hosted web API REST Service base url
-        string BaseUrl = "https://localhost:44394/";
+        string BaseUrl = "http://geographies-api";
         AdministrativeDivision adminDivision = new AdministrativeDivision();
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<List<AdministrativeDivision>> GetAllAdministrativeDivisionModels()
+        {
+            List<AdministrativeDivision> administrativeDivisions = new List<AdministrativeDivision>();
+            using (var client = new HttpClient())
+            {
+                //Passing service base url
+                client.BaseAddress = new Uri(BaseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Define request data format
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource Get Administrative Divisions using HttpClient
+                HttpResponseMessage res = await client.GetAsync("api/AdministrativeDivisions");
+                //Checking if the response is successful or not which is sent using HttpClient
+                if (res.IsSuccessStatusCode)
+                {
+                    //Storing the response details received from web api
+                    var adminDivisionsResponse = res.Content.ReadAsStringAsync().Result;
+
+                    //Deserializing the response received from the web api and storing into Administrative Divisions list
+                    var serializer = GeoJsonSerializer.CreateDefault();
+                    serializer.CheckAdditionalContent = true;
+                    var stream = new MemoryStream();
+                    var writer = new StreamWriter(stream);
+                    writer.Write(adminDivisionsResponse);
+                    writer.Flush();
+                    stream.Position = 0;
+
+                    using (var textReader = new StreamReader(stream))
+                    using (var jsonReader = new JsonTextReader(textReader))
+                    {
+                        administrativeDivisions = serializer.Deserialize<List<AdministrativeDivision>>(jsonReader);
+                    }
+                }
+            }
+            return administrativeDivisions;
         }
 
         [HttpGet]

@@ -12,7 +12,7 @@ namespace CityMonitoringAppMvc.Controllers
     public class CitizensController : Controller
     {
         //Hosted web API REST Service base url
-        string BaseUrl = "https://localhost:44303/";
+        string BaseUrl = "http://citizens-api";
         public IActionResult Index()
         {
             return View();

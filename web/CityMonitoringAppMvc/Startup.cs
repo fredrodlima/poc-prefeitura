@@ -31,7 +31,7 @@ namespace CityMonitoringAppMvc
 
             services.AddDbContext<GeographiesDbContext>(opt =>
                 opt.UseSqlServer(
-                    @"Data Source=DESKTOP-MLSTEDC;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False; Database=geographies-db",
+                    Configuration.GetConnectionString("GeographiesDbContext"),
                     x => x.UseNetTopologySuite()
                 ));
         }
