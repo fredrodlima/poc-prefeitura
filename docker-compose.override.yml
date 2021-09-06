@@ -5,33 +5,44 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
+    container_name: citizens-api
     ports:
       - "5000:80"
       - "5001:443"
+    networks:
+      - poc-prefeitura-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - sqldata
+      - artemis
   taxcalculationapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
+    container_name: taxcalculation-api
     ports:
       - "5002:80"
       - "5003:443"
+    networks:
+      - poc-prefeitura-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - sqldata
+      - artemis
   geographiesapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
+    container_name: geographies-api
     ports:
       - "5004:80"
       - "5005:443"
+    networks:
+      - poc-prefeitura-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
@@ -41,18 +52,45 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
+    container_name: projects-api
     ports:
       - "5006:80"
       - "5007:443"
+    networks:
+      - poc-prefeitura-network
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - sqldata
+      - artemis
   sqldata:
-    image: mcr.microsoft.com/mssql/server:2019-latest 
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sql-data
     ports:
       - 1433:1433
     environment:
       SA_PASSWORD: "Passw@rd123!"
       ACCEPT_EULA: "Y"
+  artemis:
+    image: activemq/artemis
+    container_name: activemq-artemis
+    ports:
+      - 8161:8161
+      # JMX Exporter
+      - 9404:9404
+      # Netty
+      - 9876:9876
+      # Port for CORE,MQTT,AMQP,HORNETQ,STOMP,OPENWIRE
+      - 61616:61616
+      # Port for HORNETQ,STOMP
+      - 5445:5445
+      # Port for AMQP
+      - 5672:5672
+      # Port for MQTT
+      - 1883:1883
+      #Port for STOMP
+      - 61613:61613
+networks:
+  poc-prefeitura-network:
+    driver: bridge
