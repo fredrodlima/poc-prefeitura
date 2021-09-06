@@ -1,6 +1,16 @@
 version: '3.4'
 
 services:
+  citymonitoringappmvc:
+    image: ${DOCKER_REGISTRY-}citymonitoringappmvc
+    build:
+      context: .
+      dockerfile: web/CityMonitoringAppMvc/Dockerfile
+    networks:
+      - poc-prefeitura-network
+    depends_on:
+      - citizensapi
+      - geographiesapi
   projectsappmvc:
     image: ${DOCKER_REGISTRY-}projectsappmvc
     build:

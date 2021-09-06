@@ -1,6 +1,22 @@
 version: '3.4'
 
 services:
+  citymonitoringappmvc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    container_name: city-monitoring-app-mvc
+    ports:
+      - "5010:80"
+      - "5011:443"
+    networks:
+      - poc-prefeitura-network
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - citizensapi
+      - geographiesapi
   projectsappmvc:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
