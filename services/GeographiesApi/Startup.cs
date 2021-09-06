@@ -26,7 +26,7 @@ namespace GeographiesApi
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("http://taxcalculation-api", "http://citizens-api"));
+                    builder => builder.WithOrigins("http://taxcalculation-api", "http://citizens-api", "http://city-monitoring-app-mvc"));
             });
 
             services.AddControllers().AddJsonOptions(options => {
