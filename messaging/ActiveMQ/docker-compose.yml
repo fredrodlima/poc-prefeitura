@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  myartemis:
-    build: artemis/
+  artemis:
+    image: activemq/artemis
     ports:
       - 8161:8161
       # JMX Exporter

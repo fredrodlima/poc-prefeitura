@@ -17,7 +17,7 @@ RUN tar -xvf ./artemis.tar; \
 ln -s /artemis/apache-artemis-2.17.0/ ./current
 #WORKDIR /artemis/current
 ENV JAVA_HOME /artemis/zulu14.28.21-ca-jre14.0.1-linux_musl_x64/
-RUN /artemis/current/bin/artemis create --user admin --password admin --http-host 0.0.0.0 --require-login --relax-jolokia poc-prefeitura
+RUN /artemis/current/bin/artemis create --user admin --password Passw@rd123! --http-host 0.0.0.0 --require-login --relax-jolokia poc-prefeitura
 
 # Web Server
 EXPOSE 8161 \
