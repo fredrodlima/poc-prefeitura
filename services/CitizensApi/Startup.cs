@@ -3,6 +3,7 @@ using ActiveMQ.Artemis.Client.Extensions.DependencyInjection;
 using ActiveMQ.Artemis.Client.Extensions.Hosting;
 using CitizensApi.Messaging.Producers;
 using CitizensApi.Models;
+using CitizensApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -49,12 +50,12 @@ namespace CitizensApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CitizensApi", Version = "v1" });
             });
-            
+
             //Declaring the queue for requesting the tax calculation
-            //var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "admin")};
-            //services.AddActiveMq("taxcalculation-queue", endpoints)
-            //    .AddAnonymousProducer<MessageProducer>();
-            //services.AddActiveMqHostedService();
+            var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "admin")};
+            services.AddActiveMq("taxcalculation-queue", endpoints)
+                .AddAnonymousProducer<MessageProducer>();
+            services.AddActiveMqHostedService();
 
         }
 
