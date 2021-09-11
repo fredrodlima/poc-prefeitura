@@ -75,7 +75,7 @@ namespace GeographiesApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<AdministrativeDivision>> PostAdministrativeDivision(AdministrativeDivision administrativeDivision)
-        {
+        {            
             _context.AdministrativeDivisions.Add(administrativeDivision);
             await _context.SaveChangesAsync();
 

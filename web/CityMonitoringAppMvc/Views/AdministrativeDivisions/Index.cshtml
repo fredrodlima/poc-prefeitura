@@ -252,13 +252,19 @@
             for (let j = 0; j < tr.children.length; j++) {
                 const td = tr.children[j];
                 if (j % 2 == 0) {
-                    entry.latitude = Number(td.getInnerHTML());
+                    if (td.getInnerHTML().toString().localeCompare("") !== 0) {
+                        entry.latitude = Number(td.getInnerHTML());
+                    }
                 }
                 else {
-                    entry.longitude = Number(td.getInnerHTML());
+                    if (td.getInnerHTML().toString().localeCompare("") !== 0) {
+                        entry.longitude = Number(td.getInnerHTML());
+                    }
                 }
             }
-            coordinatesArray.push({ entry });
+            if (entry.latitude != null && entry.longitude != null) {
+                coordinatesArray.push({ entry });
+            }
         }
     }
 </script>

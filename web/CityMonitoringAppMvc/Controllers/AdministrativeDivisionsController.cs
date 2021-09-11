@@ -19,7 +19,8 @@ namespace CityMonitoringAppMvc.Controllers
     {
         //Hosted web API REST Service base url
         string BaseUrl = "http://geographies-api";
-        AdministrativeDivision adminDivision = new AdministrativeDivision();
+        //AdministrativeDivision adminDivision = new AdministrativeDivision();
+        GeometryFactory geometryFatory = new GeometryFactory() { };
         public IActionResult Index()
         {
             return View();
@@ -184,7 +185,7 @@ namespace CityMonitoringAppMvc.Controllers
         [HttpPost]
         public async Task<AdministrativeDivisionViewModel> AddAdministrativeDivision(AdministrativeDivisionViewModel adminDivisionVM)
         {
-            adminDivision = new AdministrativeDivision();
+            var adminDivision = new AdministrativeDivision();
             var administrativeDivisionViewModel = new AdministrativeDivisionViewModel();
             List<Coordinate> coordinates = new();
 
@@ -193,9 +194,9 @@ namespace CityMonitoringAppMvc.Controllers
                 Coordinate coord = new(coordinate.Longitude, coordinate.Latitude);
                 coordinates.Add(coord);
             }
-            var g1 = new GeometryFactory().CreateLinearRing(coordinates.ToArray());
+            var g1 = geometryFatory.CreateLinearRing(coordinates.ToArray());
             var holes = Array.Empty<LinearRing>();
-            adminDivision.Geography = new GeometryFactory().CreatePolygon(g1, holes);
+            adminDivision.Geography = geometryFatory.CreatePolygon(g1, holes);
             adminDivision.Name = adminDivisionVM.Name;
             adminDivision.AdministrativeDivisionLevelId = adminDivisionVM.AdministrativeDivisionLevelId;
 
@@ -233,7 +234,7 @@ namespace CityMonitoringAppMvc.Controllers
 
                         using var textReader = new StreamReader(stream);
                         using var jsonReader = new JsonTextReader(textReader);
-                        var adminDivision = serializer.Deserialize<AdministrativeDivision>(jsonReader);
+                        adminDivision = serializer.Deserialize<AdministrativeDivision>(jsonReader);
 
 
                         List<CoordinatesViewModel> coordinatesVM = new List<CoordinatesViewModel>();
@@ -262,6 +263,7 @@ namespace CityMonitoringAppMvc.Controllers
         [HttpPut]
         public async Task<string> UpdateAdministrativeDivision(AdministrativeDivisionViewModel adminDivisionVM)
         {
+            var adminDivision = new AdministrativeDivision();
             var message = "";
             using (var client = new HttpClient())
             {
