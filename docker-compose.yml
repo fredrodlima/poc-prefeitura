@@ -1,18 +1,42 @@
 version: '3.4'
 
 services:
+  citymonitoringappmvc:
+    image: ${DOCKER_REGISTRY-}citymonitoringappmvc
+    build:
+      context: .
+      dockerfile: web/CityMonitoringAppMvc/Dockerfile
+    networks:
+      - poc-prefeitura-network
+    depends_on:
+      - citizensapi
+      - geographiesapi
+  projectsappmvc:
+    image: ${DOCKER_REGISTRY-}projectsappmvc
+    build:
+      context: .
+      dockerfile: web/ProjectsAppMvc/Dockerfile
+    networks:
+      - poc-prefeitura-network
+    depends_on:
+      - projectsapi
   citizensapi:
     image: ${DOCKER_REGISTRY-}citizensapi
     build:
       context: .
       dockerfile: services/CitizensApi/Dockerfile
+    networks:
+      - poc-prefeitura-network
     depends_on:
       - sqldata
+      - artemis
   taxcalculationapi:
     image: ${DOCKER_REGISTRY-}taxcalculationapi
     build:
       context: .
       dockerfile: services/TaxCalculationApi/Dockerfile
+    networks:
+      - poc-prefeitura-network
     depends_on:
       - sqldata
   geographiesapi:
@@ -20,6 +44,8 @@ services:
     build:
       context: .
       dockerfile: services/GeographiesApi/Dockerfile
+    networks:
+      - poc-prefeitura-network
     depends_on:
       - sqldata
   projectsapi:
@@ -27,12 +53,37 @@ services:
     build:
       context: .
       dockerfile: services/ProjectsApi/Dockerfile
+    networks:
+      - poc-prefeitura-network
     depends_on:
       - sqldata
+      - artemis
   sqldata:
     image: mcr.microsoft.com/mssql/server:2019-latest 
     ports:
       - 1433:1433
+    networks:
+      - poc-prefeitura-network
     environment:
       SA_PASSWORD: "Passw@rd123!"
       ACCEPT_EULA: "Y"
+  artemis:
+    image: activemq/artemis
+    ports:
+      - 8161:8161
+      # JMX Exporter
+      - 9404:9404
+      # Netty
+      - 9876:9876
+      # Port for CORE,MQTT,AMQP,HORNETQ,STOMP,OPENWIRE
+      - 61616:61616
+      # Port for HORNETQ,STOMP
+      - 5445:5445
+      # Port for AMQP
+      - 5672:5672
+      # Port for MQTT
+      - 1883:1883
+      #Port for STOMP
+      - 61613:61613
+    networks:
+      - poc-prefeitura-network

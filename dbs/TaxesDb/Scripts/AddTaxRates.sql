@@ -1,8 +1,8 @@
-﻿INSERT INTO TaxRates(ImmobileTypeId, Rate)
-VALUES (1, 0.25)
-
-INSERT INTO TaxRates(ImmobileTypeId, Rate)
-VALUES (2, 0.20)
-
-INSERT INTO TaxRates(ImmobileTypeId, Rate)
-VALUES (3, 0.15)
+﻿INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (1, 0.25)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (2, 0.20)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (3, 0.15)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (4, 0.145)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (5, 0.145)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (6, 0.145)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (7, 0.115)
+INSERT INTO [taxes-db].[dbo].[TaxRates](ImmobileTypeId, Rate) VALUES (8, 0.115)

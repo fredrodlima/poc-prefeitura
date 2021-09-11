@@ -27,11 +27,11 @@ namespace CitizensApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(options =>
-            // {
-            //     options.AddPolicy("CitizenApiPolicy",
-            //         builder => builder.WithOrigins("https://localhost:5003"));
-            // });
+            services.AddCors(options =>
+             {
+                 options.AddPolicy("CitizenApiPolicy",
+                     builder => builder.WithOrigins("http://city-monitoring-app-mvc"));
+             });
 
             services.AddControllers().AddJsonOptions(options => {
                 // open api is currently using system.text.json
@@ -49,12 +49,12 @@ namespace CitizensApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CitizensApi", Version = "v1" });
             });
-            
+
             //Declaring the queue for requesting the tax calculation
-            //var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "admin")};
-            //services.AddActiveMq("taxcalculation-queue", endpoints)
-            //    .AddAnonymousProducer<MessageProducer>();
-            //services.AddActiveMqHostedService();
+            var endpoints = new [] { Endpoint.Create(host : "artemis", port: 5672, "admin", "Passw@rd123!") };
+            services.AddActiveMq("taxcalculation-queue", endpoints)
+                .AddAnonymousProducer<MessageProducer>();
+            services.AddActiveMqHostedService();
 
         }
 
@@ -68,9 +68,9 @@ namespace CitizensApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CitizensApi v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            //app.UseCors("CitizenApiPolicy");
+            app.UseCors("CitizenApiPolicy");
 
             app.UseRouting();
 

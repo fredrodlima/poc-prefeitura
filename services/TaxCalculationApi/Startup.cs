@@ -37,15 +37,17 @@ namespace TaxCalculationApi
             
             services.AddDbContext<TaxesDbContext>(opt => 
                 opt.UseSqlServer(Configuration.GetConnectionString("TaxesDbContext")));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaxCalculationApi", Version = "v1" });
             });
 
-            //var endpoints = new [] { Endpoint.Create(host: "artemis", port: 5672, "admin", "admin")};
-            //services.AddActiveMq("taxcalculation-queue", endpoints)
-            //.AddTypedConsumer<RequestTaxCalculationCreated, TaxCalculationRequestConsumer>(RoutingType.Multicast);
-            //services.AddActiveMqHostedService();
+            //Declaring the queue for receiving requests of tax calculation
+            var endpoints = new [] { Endpoint.Create(host: "artemis", port: 5672, "admin", "Passw@rd123!") };
+            services.AddActiveMq("taxcalculation-queue", endpoints)
+            .AddTypedConsumer<RequestTaxCalculationCreated, TaxCalculationRequestConsumer>(RoutingType.Multicast);
+            services.AddActiveMqHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

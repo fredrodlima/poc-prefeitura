@@ -4,17 +4,20 @@ using CitizensApi.Services;
 using TaxCalculationApi.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 public class TaxCalculationRequestConsumer : ITypedConsumer<RequestTaxCalculationCreated>
 {
     private readonly TaxesDbContext _context;
-    public TaxCalculationRequestConsumer(TaxesDbContext context)
+    private readonly IConfiguration _configuration;
+    public TaxCalculationRequestConsumer(TaxesDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
     public async Task ConsumeAsync(RequestTaxCalculationCreated message, CancellationToken cancellationToken)
     {
-        var citizenLocalitiesServices = new CitizenLocalitiesService();
+        var citizenLocalitiesServices = new CitizenLocalitiesService(_configuration);
         var citizenLocalities = citizenLocalitiesServices.GetMyLocalities(message.CitizenId);
         var taxRates = await _context.TaxRates.ToListAsync();
         var immobiles = await _context.Immobiles.ToListAsync();

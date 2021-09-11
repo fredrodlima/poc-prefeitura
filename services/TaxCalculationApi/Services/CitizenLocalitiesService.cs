@@ -1,4 +1,5 @@
 using CitizensApi.Services.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,11 @@ namespace CitizensApi.Services
 {
     public class CitizenLocalitiesService
     {
+        private string GeographiesApiBaseUrl;
+        public CitizenLocalitiesService(IConfiguration configuration)
+        {
+            GeographiesApiBaseUrl = configuration["Services:GeographiesApiBaseAddress"];
+        }
         public IEnumerable<CitizenLocalitiesModel> GetMyLocalities(int citizenId)
         {
             var citizenLocalities = new List<CitizenLocalitiesModel>();
@@ -16,7 +22,7 @@ namespace CitizensApi.Services
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("https://localhost:44394");
+                    client.BaseAddress = new Uri(GeographiesApiBaseUrl);
                     var url = string.Format(@"api/citizenlocalities/localities/{0}", citizenId);
 
                     var result = client.GetStringAsync(url).Result;

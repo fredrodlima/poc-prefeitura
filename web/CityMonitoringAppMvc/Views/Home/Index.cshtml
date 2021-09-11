@@ -43,24 +43,27 @@
                 map: map,
             });
 
-            fetch('https://localhost:44394/api/administrativedivisions', myInit)
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (adminDivisions) {
+            $.ajax({
+                type: "GET",
+                url: "/AdministrativeDivisions/GetAllAdministrativeDivisionModels",
+                headers: myHeaders,
+                mode: 'cors',
+                cache: 'default',
+                async: true,
+                success: (adminDivisions) => {
                     const features = adminDivisions.map(adminDivision => {
-                            const feature = {
-                                type: "Feature",
-                                geometry: adminDivision.geography,
-                                properties: {
-                                    name: adminDivision.name,
-                                }
-                            };
+                        const feature = {
+                            type: "Feature",
+                            geometry: adminDivision.geography,
+                            properties: {
+                                name: adminDivision.name,
+                            }
+                        };
 
 
-                            return feature;
+                        return feature;
                     })
-                    
+
                     for (feature of features) {
                         map.data.addGeoJson(feature, { idPropertyName: "name" });
                     }
@@ -78,7 +81,8 @@
                             strokeWeight: 1
                         }
                     });
-                });
+                }
+            });
         }
     </script>
   </head>

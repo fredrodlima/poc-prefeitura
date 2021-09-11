@@ -25,11 +25,11 @@ namespace ProjectsApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("ProjectsApiPolicy",
-            //        builder => builder.WithOrigins("https://localhost:44305"));
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ProjectsApiPolicy",
+                    builder => builder.WithOrigins("http://projects-app-mvc"));
+            });
 
             services.AddControllers();
 
@@ -42,10 +42,10 @@ namespace ProjectsApi
             });
 
             //Declaring the queue for project and project phase updates
-            //var endpoints = new[] { Endpoint.Create(host: "localhost", port: 5672, "admin", "admin") };
-            //services.AddActiveMq("watcher-projects-cluster", endpoints)
-            //    .AddAnonymousProducer<MessageProducer>();
-            //services.AddActiveMqHostedService();
+            var endpoints = new[] { Endpoint.Create(host: "artemis", port: 5672, "admin", "Passw@rd123!") };
+            services.AddActiveMq("watcher-projects", endpoints)
+                .AddAnonymousProducer<MessageProducer>();
+            services.AddActiveMqHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,11 +58,11 @@ namespace ProjectsApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectsApi v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            //app.UseCors("ProjectsApiPolicy");
+            app.UseCors("ProjectsApiPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();

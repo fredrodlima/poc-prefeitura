@@ -18,7 +18,7 @@ namespace CityMonitoringAppMvc.Controllers
     public class CitizenLocalitiesController : Controller
     {
         //Hosted web API REST Service base url
-        string BaseUrl = "https://localhost:44394/";
+        string BaseUrl = "http://geographies-api";
         CitizenLocality citizenLocality = new CitizenLocality();
         public IActionResult Index()
         {

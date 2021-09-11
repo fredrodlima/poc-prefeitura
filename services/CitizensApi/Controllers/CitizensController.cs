@@ -5,6 +5,7 @@ using CitizensApi.Services;
 using CitizensApi.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,13 @@ namespace CitizensApi.Controllers
     {
         private readonly CitizensDbContext _context;
         private readonly MessageProducer _messageProducer;
+        private readonly IConfiguration _configuration;
 
-        public CitizensController(CitizensDbContext context, MessageProducer messageProducer)
+        public CitizensController(IConfiguration configuration, CitizensDbContext context, MessageProducer messageProducer)
         {
             _context = context;
             _messageProducer = messageProducer;
+            _configuration = configuration;
         }
 
         // GET: api/Citizens
@@ -55,7 +58,7 @@ namespace CitizensApi.Controllers
             {
                 return NotFound();
             }
-            var citizenLocalitiesService = new CitizenLocalitiesService();
+            var citizenLocalitiesService = new CitizenLocalitiesService(_configuration);
             return citizenLocalitiesService.GetMyLocalities(citizen.Id).ToList();
         }
 
