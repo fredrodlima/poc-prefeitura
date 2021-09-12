@@ -12,6 +12,7 @@ namespace ProjectsAppMvc.Models
         [Display(Name = "Fases concluídas")]
         public int PhasesCompleted { get; set; }
         [Display(Name = "Progresso (%)")]
+        [DisplayFormat(DataFormatString = "{0:P2}")]
         public double Progress { get; set; }
     }
 }
