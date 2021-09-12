@@ -12,9 +12,9 @@ RUN tar -xvf ./jre14.tar
 RUN ln -s /artemis/zulu14.28.21-ca-jre14.0.1-linux_musl_x64/bin/java /usr/bin/java
 RUN java --version
 
-RUN wget -O "artemis.tar" "https://www.apache.org/dyn/closer.cgi?filename=activemq/activemq-artemis/2.17.0/apache-artemis-2.17.0-bin.tar.gz&action=download"
+RUN wget -O "artemis.tar" "https://www.apache.org/dyn/closer.cgi?filename=activemq/activemq-artemis/2.18.0/apache-artemis-2.18.0-bin.tar.gz&action=download"
 RUN tar -xvf ./artemis.tar; \
-ln -s /artemis/apache-artemis-2.17.0/ ./current
+ln -s /artemis/apache-artemis-2.18.0/ ./current
 #WORKDIR /artemis/current
 ENV JAVA_HOME /artemis/zulu14.28.21-ca-jre14.0.1-linux_musl_x64/
 RUN /artemis/current/bin/artemis create --user admin --password Passw@rd123! --http-host 0.0.0.0 --require-login --relax-jolokia poc-prefeitura
