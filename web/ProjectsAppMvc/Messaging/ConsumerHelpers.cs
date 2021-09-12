@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using ProjectsAppMvc.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -21,6 +22,8 @@ namespace ProjectsAppMvc.Messaging
         }
         public async Task Consume(int projectId)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             using (var client = new HttpClient())
             {
                 var individualMetric = new IndividualMetric();
@@ -121,6 +124,13 @@ namespace ProjectsAppMvc.Messaging
 
                 }
             }
+            
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+            Console.WriteLine("RunTime " + elapsedTime);
         }
     }
 }
